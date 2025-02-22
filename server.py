@@ -524,6 +524,7 @@ def csrform():
             "numberOfPages": request.form.get('numberOfPages'),
             "notes": request.form.get('notes'),
             "proofing": request.form.get('proofing'),
+            "bleedAmount": request.form.get('bleedAmount'),
             "prepressNotes": request.form.get('prepressNotes')
         }
 
@@ -550,7 +551,13 @@ def csrform():
         # Update files_info to include both filenames and paths
         files_info = {
             "uploadedFiles": uploaded_files,
-            "filePaths": file_paths
+            "filePaths": file_paths,
+            "fileName": (", ".join(str(file).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;') 
+                                                    for file in data['filesInfo']['uploadedFiles']))[0],
+            "format": (", ".join(str(file).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;') 
+                                                    for file in data['filesInfo']['uploadedFiles']))[1],
+
+
         }
 
         # Update service settings to handle all services with option IDs and names
@@ -593,7 +600,9 @@ def csrform():
             "substrate": request.form.get('substrate'),
             "trimSize": request.form.get('trimSize'),
             "layoutSheet": request.form.get('layoutSheet'),
-            "layoutSize":request.form.get('layoutSize')
+            "layoutSize":request.form.get('layoutSize'),
+            "color":request.form.get('colorSpecs')
+
         }
 
         # Delivery Information

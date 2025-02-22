@@ -178,8 +178,8 @@
                 <span class="value"></span>
             </div>
             <div class="info-item">
-                <span class="label">Size and Dimensions:</span>
-                <span class="value"></span>
+                <span class="label">Trim Size:</span>
+                <span class="value">{{ order.prodDetails.trimSize or 'N/A' }}</span>
             </div>
             <div class="info-item">
                 <span class="label">Color Specifications:</span>
@@ -226,7 +226,7 @@
             <h2 class="card-title">Bleed and Margin</h2>
             <div class="info-item">
                 <span class="label">Bleed Specifications:</span>
-                <span class="value"></span>
+                <span class="value">{{order.jobInfo.bleedAmount}}</span>
             </div>
             <div class="info-item">
                 <span class="label">Margin Specifications:</span>
@@ -239,11 +239,11 @@
             <h2 class="card-title">File Information</h2>
             <div class="info-item">
                 <span class="label">File Format:</span>
-                <span class="value"></span>
+                <span class="value">{{order.filesInfo.format}}</span>
             </div>
             <div class="info-item">
                 <span class="label">File Names:</span>
-                <span class="value"></span>
+                <span class="value">{{order.filesInfo.fileName}}</span>
             </div>
 
             <div class="info-item">

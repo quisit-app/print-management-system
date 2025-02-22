@@ -269,6 +269,15 @@
                         
                         <label for="prepressNotes">Prepress Notes</label>
                         <input type="text" name="prepressNotes" value ="{{ past_order.jobInfo.prepressNotes if past_order else request.form['prepressNotes']}}">
+
+                        <label for="colorSpecs">Colour Specification</label>
+                        <select class="form-control" name="colorSpecs" id="colorSpecs" required>
+                            <option value="">Select a colour...</option>
+                            <option value="Black and White" {% if past_order and past_order.prodDetails.color == 'Black and White' %}selected{% endif %}>Black and White</option>
+                            <option value="Color" {% if past_order and past_order.prodDetails.color == 'Color' %}selected{% endif %}>Color</option>
+                            <option value="Others" {% if past_order and past_order.prodDetails.color == 'Others' %}selected{% endif %}>Others</option>
+                        </select>
+
                    
 <!--                         
                         <label for="deadline">Deadline</label>
