@@ -1,0 +1,214 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block content %}
+<div class="calendar-wrapper">
+    <div class="calendar-container">
+        <div class="calendar-header">
+            <button id="prevMonth">&lt;</button>
+            <h3 id="monthYear">February 2025</h3>
+            <button id="nextMonth">&gt;</button>
+        </div>
+        <table class="calendar">
+            <thead>
+                <tr>
+                    <th>Sun</th>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                </tr>
+            </thead>
+            <tbody id="calendar-body">
+                <!-- First week -->
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>1</td>
+                    <td>2</td>
+                    <td>3</td>
+                </tr>
+                <!-- Second week -->
+                <tr>
+                    <td>4</td>
+                    <td>5</td>
+                    <td>6</td>
+                    <td>7</td>
+                    <td>8</td>
+                    <td>9</td>
+                    <td>10</td>
+                </tr>
+                <!-- Add more weeks as needed -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<style>
+    .calendar-wrapper {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 30px;
+    }
+
+    .calendar-container {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .calendar-header button {
+        background: #005aab;
+        color: white;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .calendar {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .calendar th,
+    .calendar td {
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .calendar th {
+        background: #f8fafc;
+        color: #4a5568;
+        font-weight: 500;
+    }
+
+    .calendar td {
+        height: 100px;
+        position: relative;
+        vertical-align: top;
+        padding: 10px;
+    }
+
+    .date-number {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        font-size: 14px;
+        color: #4a5568;
+    }
+
+    .delivery-count {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 36px;
+        color: #005aab;
+        font-weight: bold;
+        background: none;
+        width: auto;
+        height: auto;
+        border-radius: 0;
+    }
+
+    .today {
+        background: #e2e8f0;
+        border: 2px solid #005aab;
+    }
+
+    .other-month {
+        color: #a0aec0;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deliveryData = {{ delivery_counts | tojson | safe }};
+    let currentDate = new Date();
+    let currentMonth = currentDate.getMonth();
+    let currentYear = currentDate.getFullYear();
+
+    function generateCalendar(year, month) {
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+        const startingDay = firstDay.getDay();
+        const monthLength = lastDay.getDate();
+
+        // Update month/year display
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+        document.getElementById('monthYear').textContent = `${monthNames[month]} ${year}`;
+
+        const calendarBody = document.getElementById('calendar-body');
+        calendarBody.innerHTML = '';
+
+        let date = 1;
+        let calendar = '';
+
+        for (let i = 0; i < 6; i++) {
+            let row = '<tr>';
+            for (let j = 0; j < 7; j++) {
+                if (i === 0 && j < startingDay) {
+                    row += '<td></td>';
+                } else if (date > monthLength) {
+                    row += '<td></td>';
+                } else {
+                    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                    const isToday = date === currentDate.getDate() && 
+                                  month === currentDate.getMonth() && 
+                                  year === currentDate.getFullYear();
+                    
+                    row += `<td class="${isToday ? 'today' : ''}">
+                        <div class="date-number">${date}</div>`;
+                    if (deliveryData[dateStr]) {
+                        row += `<div class="delivery-count">${deliveryData[dateStr]}</div>`;
+                    }
+                    row += '</td>';
+                    date++;
+                }
+            }
+            row += '</tr>';
+            calendar += row;
+            if (date > monthLength && i >= 4) break;
+        }
+        
+        calendarBody.innerHTML = calendar;
+    }
+
+    // Add event listeners and initial generation
+    document.getElementById('prevMonth').addEventListener('click', () => {
+        currentMonth--;
+        if (currentMonth < 0) {
+            currentMonth = 11;
+            currentYear--;
+        }
+        generateCalendar(currentYear, currentMonth);
+    });
+
+    document.getElementById('nextMonth').addEventListener('click', () => {
+        currentMonth++;
+        if (currentMonth > 11) {
+            currentMonth = 0;
+            currentYear++;
+        }
+        generateCalendar(currentYear, currentMonth);
+    });
+
+    // Initial calendar generation
+    generateCalendar(currentYear, currentMonth);
+});
+</script>
+{% endblock %}

@@ -2378,5 +2378,31 @@ def download_pdf(order_id):
     
     return response
 
+@app.route('/schedule')
+def schedule():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    # Get all delivery dates and count them more efficiently
+    pipeline = [
+        {
+            "$group": {
+                "_id": "$orderInfo.deliveryDate",
+                "count": {"$sum": 1}
+            }
+        }
+    ]
+    
+    delivery_counts = {}
+    results = db.form.aggregate(pipeline)
+    
+    for result in results:
+        if result["_id"]:  # Check if date exists
+            delivery_counts[result["_id"]] = result["count"]
+    
+    print("Delivery Counts:", delivery_counts)  # Debug print
+    
+    return render_template('schedule.html', delivery_counts=delivery_counts)
+
 if (__name__ == '__main__'):
     app.run()
