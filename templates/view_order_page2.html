@@ -165,24 +165,24 @@
             <h2 class="card-title">Print Specification</h2>
             <div class="info-item">
                 <span class="label">Quantity:</span>
-                <span class="value">{{ order.orderInfo.orderId or 'N/A' }}</span>
+                <span class="value">{{ order.orderInfo.quantity or 'N/A' }}</span>
             </div>
    
             <div class="info-item">
                 <span class="label">Paper Type:</span>
-                <span class="value">{{ order.customerInfo.contactPerson or 'N/A' }}</span>
+                <span class="value">{{ order.serviceSettings.PAPERTYPE.optionId or 'N/A' }}</span>
             </div>
             <div class="info-item">
                 <span class="label">Paper Weight:</span>
-                <span class="value">{{ order.customerInfo.telNo or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             <div class="info-item">
                 <span class="label">Size and Dimensions:</span>
-                <span class="value">{{ order.customerInfo.email or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             <div class="info-item">
                 <span class="label">Color Specifications:</span>
-                <span class="value">{{ order.customerInfo.email or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             
         </div>
@@ -191,7 +191,7 @@
             <h2 class="card-title">Finishing Options</h2>
             <div class="info-item">
                 <span class="label">Lamination:</span>
-                <span class="value">{{ order.jobInfo.name or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             <div class="info-item">
                 <span class="label">Vanishing:</span>
@@ -199,7 +199,7 @@
             </div>
             <div class="info-item">
                 <span class="label">Coating:</span>
-                <span class="value">{{ order.jobInfo.notes or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
           
         </div>
@@ -208,7 +208,7 @@
             <h2 class="card-title">Binding Options</h2>
             <div class="info-item">
                 <span class="label">Saddled-Stitched:</span>
-                <span class="value">{{ order.jobInfo.name or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             <div class="info-item">
                 <span class="label">Perfect Bound:</span>
@@ -216,7 +216,7 @@
             </div>
             <div class="info-item">
                 <span class="label">Spiral Bound:</span>
-                <span class="value">{{ order.jobInfo.notes or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
           
         </div>
@@ -225,7 +225,7 @@
             <h2 class="card-title">Bleed and Margin</h2>
             <div class="info-item">
                 <span class="label">Bleed Specifications:</span>
-                <span class="value">{{ order.jobInfo.name or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             <div class="info-item">
                 <span class="label">Margin Specifications:</span>
@@ -238,7 +238,7 @@
             <h2 class="card-title">File Information</h2>
             <div class="info-item">
                 <span class="label">File Format:</span>
-                <span class="value">{{ order.jobInfo.name or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             <div class="info-item">
                 <span class="label">File Names:</span>
@@ -254,13 +254,20 @@
 
         <div class="card">
             <h2 class="card-title">Proofing and Approval</h2>
-            <div class="info-item">
-                <span class="label">Proof Required:</span>
-                <span class="value">{{ order.jobInfo.name or 'N/A' }}</span>
-            </div>
+            {% if order.jobInfo.proofing %}
+                <div class="info-item">
+                    <span class="label">Proof Required:</span>
+                    <span class="value">Yes</span>
+                </div>
+            {%else%}
+                <div class="info-item">
+                    <span class="label">Proof Required:</span>
+                    <span class="value">No</span>
+                </div>
+            {%endif%}
             <div class="info-item">
                 <span class="label">Proofing Method:</span>
-                <span class="value"></span>
+                <span class="value">{{order.jobInfo.proofing}}</span>
             </div>
 
             <div class="info-item">

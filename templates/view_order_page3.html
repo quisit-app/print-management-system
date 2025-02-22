@@ -190,11 +190,11 @@
 
             <div class="info-item">
                 <span class="label">Delivery Method:</span>
-                <span class="value">{{ order.billingInfo.contactPerson or 'N/A' }}</span>
+                <span class="value">{{ order.orderInfo.deliveryType or 'N/A' }}</span>
             </div>
             <div class="info-item">
                 <span class="label">Delivery Date:</span>
-                <span class="value">{{ order.billingInfo.telNo or 'N/A' }}</span>
+                <span class="value">{{ order.orderInfo.deliveryDate or 'N/A' }}</span>
             </div>
           
         </div>
@@ -204,7 +204,7 @@
             <h2 class="card-title">Payment Instructions</h2>
             <div class="info-item">
                 <span class="label">Cost Breakdown:</span>
-                <span class="value">{{ order.jobInfo.name or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             <div class="info-item">
                 <span class="label">Total Price:</span>
@@ -226,7 +226,7 @@
             <h2 class="card-title">Shipping Instructions</h2>
             <div class="info-item">
                 <span class="label" style="width: 200px;">Packaging Requirements:</span>
-                <span class="value">{{ order.jobInfo.name or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
             <div class="info-item">
                 <span class="label" style="width: 200px;">Handling Instructions:</span>
@@ -239,7 +239,7 @@
             <h2 class="card-title">Purchase Order (PO) Information</h2>
             <div class="info-item">
                 <span class="label">PO Number:</span>
-                <span class="value">{{ order.deliveryInfo.address or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
         </div>
 
@@ -248,7 +248,7 @@
             <h2 class="card-title">Special Instructions</h2>
             <div class="info-item">
                 <span class="label">Special Instructions:</span>
-                <span class="value">{{ order.deliveryInfo.address or 'N/A' }}</span>
+                <span class="value"></span>
             </div>
         </div>
 
