@@ -183,6 +183,9 @@
                 <a href="">
                     Invoice
                 </a>
+                <a href="">
+                    Schedule
+                </a>
                 <a href="{{ url_for('logout') }}">
                     Logout
                 </a>
@@ -193,7 +196,7 @@
         
         </div>
 
-        <div class="main-content">
+        <div class="main-content" style="max-width: 90%;">
             {% block content %}{% endblock %}
         </div>
 
