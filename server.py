@@ -375,12 +375,35 @@ def view_order(order_id):
                 flash('Status updated successfully')
                 return redirect(url_for('welcome', order_id=order_id))
         
-        return render_template('view_order.html', order=order)
+        return render_template('view_order_page1.html', order=order,order_id=order_id)
         
     except Exception as e:
         print(e)
         # flash('Error loading order')
         return redirect(url_for('welcome'))
+
+
+@app.route('/view-order2/<order_id>/<page>')
+def view_order2(order_id, page):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    try:
+        # Convert string ID to ObjectId
+        order = db.form.find_one({"_id": ObjectId(order_id)})
+        if not order:
+            flash('Order not found')
+            return redirect(url_for('welcome'))
+        
+        if (page == "2"):
+            return render_template('view_order_page2.html', order=order, order_id=order_id)
+        else:
+            return render_template('view_order_page3.html', order=order, order_id=order_id)
+    except Exception as e:
+        flash('Error loading order')
+        return redirect(url_for('welcome'))
+
+   
 
 @app.route('/view-production/<order_id>', methods=['GET', 'POST'])
 def view_production(order_id):
