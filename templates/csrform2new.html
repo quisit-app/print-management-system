@@ -1,0 +1,780 @@
+
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"> </script>
+
+<style>
+    body {
+        background-color: #f5f7fa;
+        margin: 0;
+        padding: 15px;
+    }
+
+    .form-container {
+        max-width: 1000px;
+        margin: 20px auto;
+        padding: 25px 30px;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .form-section {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 20px;
+    }
+
+    .form-section h2, .form-section h3 {
+        color: #2d3748;
+        margin: 0 0 15px 0;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .form-section h3 {
+        font-size: 16px;
+        margin-top: 15px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 4px;
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    select,
+    textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background-color: white;
+        box-sizing: border-box;
+        margin-bottom: 8px;
+    }
+
+    .two-column-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .service-options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 12px;
+    }
+
+    .radio-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .radio-option input[type="radio"] {
+        margin: 0;
+        width: 16px;
+        height: 16px;
+    }
+
+    .file-upload-area {
+        border: 2px dashed #e2e8f0;
+        padding: 15px;
+        border-radius: 6px;
+        text-align: center;
+    }
+
+    .helper-text {
+        font-size: 12px;
+        color: #718096;
+        margin-top: 4px;
+        margin-bottom: 0;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .back-button, 
+    .submit-button {
+        padding: 8px 20px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .back-button {
+        color: #4a5568;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .submit-button {
+        background-color: #4299e1;
+        color: white;
+        border: none;
+    }
+
+    .submit-button:hover {
+        background-color: #3182ce;
+    }
+
+    select.form-control {
+        padding: 8px 12px;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    @media (max-width: 1024px) {
+        .two-column-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .service-options {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 15px;
+            margin: 10px;
+        }
+
+        .button-group {
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .back-button,
+        .submit-button {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+        .selectt {
+            display: none;
+        }
+    }
+</style>
+
+
+{% extends 'customer_base.html' %}
+{% block content %}
+<div class="form-container">
+    <div class="header">
+        <h1>Order Information</h1>
+        <!-- <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Konica Minolta Logo" style="height: 40px;"> -->
+    </div>
+
+    <form method="POST" action="{{ url_for('csrform') }}" enctype="multipart/form-data">
+        <div class="two-column-grid">
+            <!-- Left Column -->
+            <div class="column">
+             
+                <!-- Job Information -->
+                <div class="form-section">
+                    <h3>Product Information</h3>
+                    <div class="form-group">
+                        <label for="name">Job Name</label>
+                        <input type="text" name="name" 
+                               value="{{ past_order.jobInfo.name if past_order else request.form['name']}}">
+                        
+                        <!-- <label for="id">Job ID</label>
+                        <input type="text" name="id"
+                               value="{{ past_order.jobInfo.id if past_order else request.form['id'] }}"> -->
+<!-- 
+                        <label for="specification">Job Specification</label>
+                        <input type="text" name="id"
+                                    value="{{ request.form['specification'] }}" required>
+                         -->
+                        <!-- <label for="notes">Print Instruction</label>
+                        <input type="text" name="notes" value="{{  past_order.jobInfo.notes if past_order else request.form['notes']  }}">
+                         -->
+                        <label for="productType">Job Type</label>
+                        <select name="productType" id="productType" class="form-select" required>
+                            <option value="">Select a product type...</option>
+                            <option value="Booklet" {% if past_order and past_order.jobInfo.productType == 'Booklet' %}selected{% endif %}>Booklet</option>
+                            <option value="Business Card" {% if past_order and past_order.jobInfo.productType == 'Business Card' %}selected{% endif %}>Business Card</option>
+                            <option value="Letterhead" {% if past_order and past_order.jobInfo.productType == 'Letterhead' %}selected{% endif %}>Letterhead</option>
+                            <option value="Magazine" {% if past_order and past_order.jobInfo.productType == 'Magazine' %}selected{% endif %}>Magazine</option>
+                        </select>
+
+                        <label for="productName">Product Name</label>
+                        <select class="form-control" name="productName" id="productName" required>
+                            <option value="">Select a product...</option>
+                            <option value="2-up on SRA3" {% if past_order and past_order.orderInfo.productName == '2-up on SRA3' %}selected{% endif %}>2-up on SRA3</option>
+                            <option value="4 slides on A4" {% if past_order and past_order.orderInfo.productName == '4 slides on A4' %}selected{% endif %}>4 slides on A4</option>
+                            <option value="A3, Black and White" {% if past_order and past_order.orderInfo.productName == 'A3, Black and White' %}selected{% endif %}>A3, Black and White</option>
+                            <option value="A3, Color" {% if past_order and past_order.orderInfo.productName == 'A3, Color' %}selected{% endif %}>A3, Color</option>
+                            <option value="A4, Black and white" {% if past_order and past_order.orderInfo.productName == 'A4, Black and white' %}selected{% endif %}>A4, Black and white</option>
+                            <option value="A4, Color" {% if past_order and past_order.orderInfo.productName == 'A4, Color' %}selected{% endif %}>A4, Color</option>
+                            <option value="Banner" {% if past_order and past_order.orderInfo.productName == 'Banner' %}selected{% endif %}>Banner</option>
+                            <option value="Booklet, A4" {% if past_order and past_order.orderInfo.productName == 'Booklet, A4' %}selected{% endif %}>Booklet, A4</option>
+                            <option value="Booklet with cover, A4" {% if past_order and past_order.orderInfo.productName == 'Booklet with cover, A4' %}selected{% endif %}>Booklet with cover, A4</option>
+                            <option value="Business Card 85x55" {% if past_order and past_order.orderInfo.productName == 'Business Card 85x55' %}selected{% endif %}>Business Card 85x55</option>
+                            <option value="NCR form" {% if past_order and past_order.orderInfo.productName == 'NCR form' %}selected{% endif %}>NCR form</option>
+                        </select>
+
+                        <label for="proofing">Proofing</label>
+                        <input type="text" name="proofing" value ="{{ past_order.jobInfo.proofing if past_order else request.form['proofing']}}">
+
+                        
+                        <label for="prepressNotes">Prepress Notes</label>
+                        <input type="text" name="prepressNotes" value ="{{ past_order.jobInfo.prepressNotes if past_order else request.form['prepressNotes']}}">
+                   
+<!--                         
+                        <label for="deadline">Deadline</label>
+                        <input type="date" name="deadline" id="deadline"
+                               value="{{ request.form['deadline'] }}" class="form-input"> -->
+                    
+                        
+                        <!-- <label for="numberOfPages">Number of Pages</label>
+                        <input type="number" name="numberOfPages" id="numberOfPages" min="1" 
+                               value="{{ request.form['numberOfPages'] }}" class="form-input">
+                         -->
+                      
+                    </div>
+                </div>
+
+                  <!-- Shipping Information -->
+                <div class="form-section">
+                    <h3>Job Source File</h3>
+                    <div class="form-group">
+                        <input type="file" name="files" multiple accept=".pdf,.ps,.eps,.csv" required>
+                        <p class="helper-text">Link to Customer supplied Digital File (PDF, PS, EPS, CSV)</p>
+                    </div>
+                </div>
+
+                    <!-- Shipping Information -->
+                <div class="form-section">
+                    <h3>Variable Data Printing</h3>
+                    <div class="form-group">
+                        <input type="file" name="files_VDP" accept=".csv" >
+                        <p class="helper-text">Please upload a CSV file if applicable.</p>
+                    </div>
+                </div>
+
+                <!-- Job Source Files -->
+                <div class="form-section">
+                    <h3>Shipping Information</h3>
+                    <div class="form-group">
+                        <label for="deliveryType">Delivery Type</label>
+                        <!-- <input type="text" name="deliveryType" id="deliveryType"
+                               value="{{ request.form['deliveryType'] }}" class="form-input" required> -->
+                             
+                        <select class="form-control" name="deliveryType" required>
+                            <option value="Courier Service" {% if past_order and past_order.orderInfo.deliveryType == 'Courier Service' %}selected{% endif %}>Courier Service</option>
+                            <option value="Pick up" {% if past_order and past_order.orderInfo.deliveryType == 'Pick up' %}selected{% endif %}>Pick up</option>
+                            <option value="Postal Service, c.o.d." {% if past_order and past_order.orderInfo.deliveryType == 'Postal Service, c.o.d.' %}selected{% endif %}>Postal Service, c.o.d.</option>
+                            <option value="Postal Service, send invoice" {% if past_order and past_order.orderInfo.deliveryType == 'Postal Service, send invoice' %}selected{% endif %}>Postal Service, send invoice</option>
+                        </select>
+                                
+                                                
+                        <label for="deliveryDate">Delivery Date</label>
+                        <input type="date" name="deliveryDate" id="deliveryDate"
+                                value="{{ request.form['deliveryDate'] }}" class="form-input" required>
+                        
+                        <label for="deliveryNotes">Delivery Note</label>
+                        <input type="text" name="deliveryNotes" value="{{ request.form['deliveryNotes'] }}">
+                        
+                    </div>
+                </div>
+
+                <div class="form-section digital-c1400 digital-c4070 selectt">
+                    <h3>Service Settings</h3>
+                    <div class="form-group">
+                        <!-- PUNCH -->
+                        <div class="">
+                            <label>PUNCH:</label>
+                            <select class="form-control" name="punch_optionid">
+                                <option value="OFF" {% if past_order and past_order.serviceSettings.PUNCH.optionId == 'OFF' %}selected{% endif %}>OFF</option>
+                                <option value="TRUE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == 'TRUE' %}selected{% endif %}>TRUE</option>
+                                <option value="2HOLES" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '2HOLES' %}selected{% elif not past_order %}selected{% endif %}>2HOLES</option>
+                                <option value="3HOLES" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '3HOLES' %}selected{% endif %}>3HOLES</option>
+                                <option value="4HOLES"  {% if past_order and past_order.serviceSettings.PUNCH.optionId == '4HOLES' %}selected{% endif %}>4HOLES</option>
+                                <option value="2HOLESWIDE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '2HOLESWIDE' %}selected{% endif %}>2HOLESWIDE</option>
+                                <option value="3HOLESWIDE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '3HOLESWIDE' %}selected{% endif %}>3HOLESWIDE</option>
+                                <option value="4HOLESWIDE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '4HOLESWIDE' %}selected{% endif %}>4HOLESWIDE</option>
+                                <option value="4HOLESGROUPED" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '4HOLESGROUPED' %}selected{% endif %}>4HOLESGROUPED</option>
+                                <option value="MULTIHOLE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == 'MULTIHOLE' %}selected{% endif %}>MULTIHOLE</option>
+                                <option value="RINGBOUND" {% if past_order and past_order.serviceSettings.PUNCH.optionId == 'RINGBOUND' %}selected{% endif %}>RINGBOUND</option>
+                            </select>
+                            <!-- <div class="service-options">
+                                <div>
+                                    <label>Option ID:</label>
+                                    <select class="form-control" name="punch_optionid">
+                                        <option value="OFF" {% if past_order and past_order.serviceSettings.PUNCH.optionId == 'OFF' %}selected{% endif %}>OFF</option>
+                                        <option value="TRUE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == 'TRUE' %}selected{% endif %}>TRUE</option>
+                                        <option value="2HOLES" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '2HOLES' %}selected{% elif not past_order %}selected{% endif %}>2HOLES</option>
+                                        <option value="3HOLES" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '3HOLES' %}selected{% endif %}>3HOLES</option>
+                                        <option value="4HOLES"  {% if past_order and past_order.serviceSettings.PUNCH.optionId == '4HOLES' %}selected{% endif %}>4HOLES</option>
+                                        <option value="2HOLESWIDE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '2HOLESWIDE' %}selected{% endif %}>2HOLESWIDE</option>
+                                        <option value="3HOLESWIDE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '3HOLESWIDE' %}selected{% endif %}>3HOLESWIDE</option>
+                                        <option value="4HOLESWIDE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '4HOLESWIDE' %}selected{% endif %}>4HOLESWIDE</option>
+                                        <option value="4HOLESGROUPED" {% if past_order and past_order.serviceSettings.PUNCH.optionId == '4HOLESGROUPED' %}selected{% endif %}>4HOLESGROUPED</option>
+                                        <option value="MULTIHOLE" {% if past_order and past_order.serviceSettings.PUNCH.optionId == 'MULTIHOLE' %}selected{% endif %}>MULTIHOLE</option>
+                                        <option value="RINGBOUND" {% if past_order and past_order.serviceSettings.PUNCH.optionId == 'RINGBOUND' %}selected{% endif %}>RINGBOUND</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Option Name:</label>
+                                    <input type="text" class="form-control" name="punch_optionname" value="{{past_order.serviceSettings.PAPERTYPE.optionName if past_order else request.form['punch_optionname']}}">
+                                </div>
+                            </div> -->
+
+                            <!-- STAPLE -->
+                            <div>
+                                <label>STAPLE:</label>
+                                <select class="form-control" name="staple_optionid">
+                                    <option value="OFF"  {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'OFF' %}selected{% endif %}>OFF</option>
+                                    <option value="TRUE" {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'TRUE' %}selected{% endif %}>TRUE</option>
+                                    <option value="1STAPLE" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLE' %}selected{% elif not past_order %}selected{% endif %}>1STAPLE</option>
+                                    <option value="1STAPLE(V)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLE(V)' %}selected{% endif %}>1STAPLE(V)</option>
+                                    <option value="1STAPLE(H)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLE(H)' %}selected{% endif %}>1STAPLE(H)</option>
+                                    <option value="1STAPLE(S)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLE(S)' %}selected{% endif %}>1STAPLE(S)</option>
+                                    <option value="1STAPLEII" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLEII' %}selected{% endif %}>1STAPLEII</option>
+                                    <option value="1STAPLEII(V)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLEII(V)' %}selected{% endif %}>1STAPLEII(V)</option>
+                                    <option value="1STAPLEII(H)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLEII(H)' %}selected{% endif %}>1STAPLEII(H)</option>
+                                    <option value="1STAPLEII(S)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLEII(S)' %}selected{% endif %}>1STAPLEII(S)</option>
+                                    <option value="2STAPLES" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '2STAPLES' %}selected{% endif %}>2STAPLES</option>
+                                    <option value="2STAPLEWIDE" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '2STAPLEWIDE' %}selected{% endif %}>2STAPLEWIDE</option>
+                                    <option value="2STAPLEXWIDE" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '2STAPLEXWIDE' %}selected{% endif %}>2STAPLEXWIDE</option>
+                                    <option value="4STAPLES" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '4STAPLES' %}selected{% endif %}>4STAPLES</option>
+                                    <option value="4STAPLES(CENTER)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '4STAPLES(CENTER)' %}selected{% endif %}>4STAPLES(CENTER)</option>
+                                    <option value="1STAPLE(LOWER)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLE(LOWER)' %}selected{% endif %}>1STAPLE(LOWER)</option>
+                                    <option value="1STAPLE(LOWERV)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLE(LOWERV)' %}selected{% endif %}>1STAPLE(LOWERV)</option>
+                                    <option value="1STAPLEW(LOWERH)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLEW(LOWERH)' %}selected{% endif %}>1STAPLEW(LOWERH)</option>
+                                    <option value="1STAPLE(LOWERS)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1STAPLE(LOWERS)' %}selected{% endif %}>1STAPLE(LOWERS)</option>
+                                    <option value="1CENTER" {% if past_order and past_order.serviceSettings.STAPLE.optionId == '1CENTER' %}selected{% endif %}>1CENTER</option>
+                                    <option value="CENTER" {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'CENTER' %}selected{% endif %}>CENTER</option>
+                                    <option value="CENTER(FOLD)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'CENTER(FOLD)' %}selected{% endif %}>CENTER(FOLD)</option>
+                                    <option value="CENTER(FOLDTRIM)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'CENTER(FOLDTRIM)' %}selected{% endif %}>CENTER(FOLDTRIM)</option>
+                                    <option value="CENTER(FOLDTRIM3SIDES)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'CENTER(FOLDTRIM3SIDES)' %}selected{% endif %}>CENTER(FOLDTRIM3SIDES)</option>
+                                    <option value="CENTER(SQUAREFOLD)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'CENTER(SQUAREFOLD)' %}selected{% endif %}>CENTER(SQUAREFOLD)</option>
+                                    <option value="CENTER(SQUAREFOLDTRIM)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'CENTER(SQUAREFOLDTRIM)' %}selected{% endif %}>CENTER(SQUAREFOLDTRIM)</option>
+                                    <option value="CENTER(SQUAREFOLDTRIM3SIDES)" {% if past_order and past_order.serviceSettings.STAPLE.optionId == 'CENTER(SQUAREFOLDTRIM3SIDES)' %}selected{% endif %}>CENTER(SQUAREFOLDTRIM3SIDES)</option>
+                                </select>
+                            </div>
+
+                        
+                            <!-- FOLD -->
+                            <div>
+                                <label>FOLD:</label>
+                                <select class="form-control" name="fold_optionid">
+                                    <option value="OFF" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'OFF' %}selected{% endif %}>OFF</option>
+                                    <option value="ZFOLD" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'ZFOLD' %}selected{% endif %}>ZFOLD</option>
+                                    <option value="MULTIHALFFOLD" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'MULTIHALFFOLD' %}selected{% endif %}>MULTIHALFFOLD</option>
+                                    <option value="MULTIHALFFOLDTRIM" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'MULTIHALFFOLDTRIM' %}selected{% endif %}>MULTIHALFFOLDTRIM</option>
+                                    <option value="MULTIHALFFOLDIN" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'MULTIHALFFOLDIN' %}selected{% endif %}>MULTIHALFFOLDIN</option>
+                                    <option value="MULTIHALFFOLDINTRIM" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'MULTIHALFFOLDINTRIM' %}selected{% endif %}>MULTIHALFFOLDINTRIM</option>
+                                    <option value="MULTIHALFFOLDOUT" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'MULTIHALFFOLDOUT' %}selected{% endif %}>MULTIHALFFOLDOUT</option>
+                                    <option value="MULTIHALFFOLDOUTTRIM" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'MULTIHALFFOLDOUTTRIM' %}selected{% endif %}>MULTIHALFFOLDOUTTRIM</option>
+                                    <option value="MULTILETTERFOLDIN" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'MULTILETTERFOLDIN' %}selected{% endif %}>MULTILETTERFOLDIN</option>
+                                    <option value="MULTILETTERFOLDOUT" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'MULTILETTERFOLDOUT' %}selected{% endif %}>MULTILETTERFOLDOUT</option>
+                                    <option value="HALFFOLD" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'HALFFOLD' %}selected{% elif not past_order %}selected{% endif %}>HALFFOLD</option>
+                                    <option value="HALFFOLDIN" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'HALFFOLDIN' %}selected{% endif %}>HALFFOLDIN</option>
+                                    <option value="HALFFOLDOUT" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'HALFFOLDOUT' %}selected{% endif %}>HALFFOLDOUT</option>
+                                    <option value="LETTERFOLD" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'LETTERFOLD' %}selected{% endif %}>LETTERFOLD</option>
+                                    <option value="LETTERFOLDIN" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'LETTERFOLDIN' %}selected{% endif %}>LETTERFOLDIN</option>
+                                    <option value="LETTERFOLDOUT" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'LETTERFOLDOUT' %}selected{% endif %}>LETTERFOLDOUT</option>
+                                    <option value="ZIGZAGIN" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'ZIGZAGIN' %}selected{% endif %}>ZIGZAGIN</option>
+                                    <option value="ZIGZAGOUT" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'ZIGZAGOUT' %}selected{% endif %}>ZIGZAGOUT</option>
+                                    <option value="DOUBLEPARALLELIN" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'DOUBLEPARALLELIN' %}selected{% endif %}>DOUBLEPARALLELIN</option>
+                                    <option value="DOUBLEPARALLELOUT" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'DOUBLEPARALLELOUT' %}selected{% endif %}>DOUBLEPARALLELOUT</option>
+                                    <option value="GATEFOLDIN" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'GATEFOLDIN' %}selected{% endif %}>GATEFOLDIN</option>
+                                    <option value="GATEFOLDOUT" {% if past_order and past_order.serviceSettings.FOLD.optionId == 'GATEFOLDOUT' %}selected{% endif %}>GATEFOLDOUT</option>
+                                </select>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+              
+            </div>
+
+            <!-- Right Column -->
+            <div class="column">
+                <!--production details-->
+                <div class="form-section">
+                    <h3>Job Specification</h3>
+                    <div class="form-group">
+                        <label for="bindingMethod">Binding Method</label>
+                        <input type="text" name="bindingMethod" value="{{ request.form['bindingMethod'] }}">
+
+                        
+                        <label for="substrate">Substrate</label>
+                        <select class="form-control" name="substrate" required>
+                            <option value="NV 170G 320 X 464" {% if past_order and past_order.prodDetails.substrate == 'NV 170G 320 X 464' %}selected{% endif %}>NV 170G 320 X 464</option>
+                            <option value="NEVIA 350 320X464" {% if past_order and past_order.prodDetails.substrate == 'NEVIA 350 320X464' %}selected{% endif %}>NEVIA 350 320X464</option>
+                            <option value="Coated G 170gsm" {% if past_order and past_order.prodDetails.substrate == 'Coated G 170gsm' %}selected{% endif %}>Coated G 170gsm</option>
+                            <option value="Coated M 190gsm" {% if past_order and past_order.prodDetails.substrate == 'Coated M 190gsm' %}selected{% endif %}>Coated M 190gsm</option>
+                            <option value="Plain Paper 80gsm" {% if past_order and past_order.prodDetails.substrate == 'Plain Paper 80gsm' %}selected{% endif %}>Plain Paper 80gsm</option>
+                            <option value="Sticker A4 176gsm" {% if past_order and past_order.prodDetails.substrate == 'Sticker A4 176gsm' %}selected{% endif %}>Sticker A4 176gsm</option>
+                            <option value="Platinum Pro PT 101 350gsm" {% if past_order and past_order.prodDetails.substrate == 'Platinum Pro PT 101 350gsm' %}selected{% endif %}>Platinum Pro PT 101 350gsm</option>
+                            <option value="LUSTER Photo Paper 350gsm" {% if past_order and past_order.prodDetails.substrate == 'LUSTER Photo Paper 350gsm' %}selected{% endif %}>LUSTER Photo Paper 350gsm</option>
+                            <option value="Spatial Uncoated 90gsm" {% if past_order and past_order.prodDetails.substrate == 'Spatial Uncoated 90gsm' %}selected{% endif %}>Spatial Uncoated 90gsm</option>
+                        </select>
+                                
+                        <label for="trimSize">Trim Size/Page Size</label>
+                        <select class="form-control" name="trimSize" required>
+                            <option value='5" X 8"' {% if past_order and past_order.prodDetails.trimSize == '5" X 8"' %}selected{% endif %}>5" X 8"</option>
+                            <option value='5.25" X 8"' {% if past_order and past_order.prodDetails.trimSize == '5.25" X 8"' %}selected{% endif %}>5.25" X 8"</option>
+                            <option value='5.5" X 8.5"' {% if past_order and past_order.prodDetails.trimSize == '5.5" X 8.5"' %}selected{% endif %}>5.5" X 8.5"</option>
+                            <option value='6" X 9"' {% if past_order and past_order.prodDetails.trimSize == '6" X 9"' %}selected{% endif %}>6" X 9"</option>
+                            <option value='7" X 10"' {% if past_order and past_order.prodDetails.trimSize == '7" X 10"' %}selected{% endif %}>7" X 10"</option>
+                            <option value='8" X 10"' {% if past_order and past_order.prodDetails.trimSize == '8" X 10"' %}selected{% endif %}>8" X 10"</option>
+                            <option value='8.25" X 8.25"' {% if past_order and past_order.prodDetails.trimSize == '8.25" X 8.25"' %}selected{% endif %}>8.25" X 8.25"</option>
+                            <option value='8.5" X 11"' {% if past_order and past_order.prodDetails.trimSize == '8.5" X 11"' %}selected{% endif %}>8.5" X 11"</option>
+                            <option value='8.27" X 11.69"' {% if past_order and past_order.prodDetails.trimSize == '8.27" X 11.69"' %}selected{% endif %}>8.27" X 11.69"</option>
+                        </select>
+
+                        <label for="layoutSize">Layout Sheet/Format</label>
+                        <select class="form-control" name="layoutSize" required>
+                            <option value="A1" {% if past_order and past_order.prodDetails.layoutSheet == 'A1' %}selected{% endif %}>A1</option>
+                            <option value="A2" {% if past_order and past_order.prodDetails.layoutSheet == 'A2' %}selected{% endif %}>A2</option>
+                            <option value="A3" {% if past_order and past_order.prodDetails.layoutSheet == 'A3' %}selected{% endif %}>A3</option>
+                            <option value="A3R" {% if past_order and past_order.prodDetails.layoutSheet == 'A3R' %}selected{% endif %}>A3R</option>
+                            <option value="A4" {% if past_order and past_order.prodDetails.layoutSheet == 'A4' %}selected{% endif %}>A4</option>
+                            <option value="A4R" {% if past_order and past_order.prodDetails.layoutSheet == 'A4R' %}selected{% endif %}>A4R</option>
+                            <option value="A4tab" {% if past_order and past_order.prodDetails.layoutSheet == 'A4tab' %}selected{% endif %}>A4tab</option>
+                            <option value="A5" {% if past_order and past_order.prodDetails.layoutSheet == 'A5' %}selected{% endif %}>A5</option>
+                            <option value="A6 KM-1 B2 (750X500)" {% if past_order and past_order.prodDetails.layoutSheet == 'A6 KM-1 B2 (750X500)' %}selected{% endif %}>A6 KM-1 B2 (750X500)</option>
+                            <option value="A7 KM-1 B2 (750X585)" {% if past_order and past_order.prodDetails.layoutSheet == 'A7 KM-1 B2 (750X585)' %}selected{% endif %}>A7 KM-1 B2 (750X585)</option>
+                            <option value="A8" {% if past_order and past_order.prodDetails.layoutSheet == 'A8' %}selected{% endif %}>A8</option>
+                            <option value="Banner (1260 X 297)" {% if past_order and past_order.prodDetails.layoutSheet == 'Banner (1260 X 297)' %}selected{% endif %}>Banner (1260 X 297)</option>
+                            <option value="SRA3" {% if past_order and past_order.prodDetails.layoutSheet == 'SRA3' %}selected{% endif %}>SRA3</option>
+                            <option value="SRA4" {% if past_order and past_order.prodDetails.layoutSheet == 'SRA4' %}selected{% endif %}>SRA4</option>
+                            <option value="Letter" {% if past_order and past_order.prodDetails.layoutSheet == 'Letter' %}selected{% endif %}>Letter</option>
+                            <option value="Legal" {% if past_order and past_order.prodDetails.layoutSheet == 'Legal' %}selected{% endif %}>Legal</option>
+                        </select>
+
+                        <label for="bleedAmount">Bleed Amount</label>
+                        <input type="text" name="bleedAmount" value="{{ request.form['bleedAmount'] }}">
+
+                        <label for="spotColor">Spot Color/s</label>
+                        <input type="text" name="spotColor" value="{{ request.form['spotColor'] }}">
+<!-- 
+                        <label for="preflight">Preflight</label>
+                        <input type="text" name="preflight" value="{{ request.form['preflight'] }}">
+
+                    
+                        <label for="finalPageSize">Final Page Size</label>
+                        <input type="text" name="finalPageSize" value="{{ request.form['finalPageSize'] }}"> -->
+
+                        <label for="quantity">Quantity</label>
+                        <input type="number" name="quantity" value="{{  past_order.orderInfo.quantity if past_order else request.form['quantity'] }}" required>
+
+                        <label for="notes">Order Notes</label>
+                        <input type="text" name="notes" value="{{  past_order.jobInfo.notes if past_order else request.form['notes']  }}">
+                        
+
+                    </div>
+
+                </div>
+                 <!-- Output Information -->
+                 <div class="form-section">
+                    <h3>Output Information</h3>
+                    <div class="form-group">
+
+                        <!-- <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="inkjet-proof-hp" name="outputType" value="Inkjet-Proof - HP" ">
+                                <label for="inkjet-proof-hp">Inkjet-Proof - HP</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="digital-c4070" name="outputType" value="Digital - C4070" ">
+                                <label for="digital-c4070">Digital - C4070</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="offset-sm74" name="outputType" value="Offset - SM74" ">
+                                <label for="offset-sm74">Offset - SM74</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="digital-c1400" name="outputType" value="Digital - C1400" ">
+                                <label for="digital-c1400">Digital - C1400</label>
+                            </div>
+                        </div> -->
+                        <div class="radio-option">
+                            <input type="radio" id="inkjet-proof-hp" name="outputType" value="Inkjet-Proof - HP" 
+                                   {% if past_order and past_order.outputInfo.outputType == 'Inkjet-Proof - HP' %}checked{% endif %}>
+                            <label for="inkjet-proof-hp">Inkjet-Proof - HP</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="digital-c4070" name="outputType" value="Digital - C4070"
+                                   {% if past_order and past_order.outputInfo.outputType == 'Digital - C4070' %}checked{% endif %}>
+                            <label for="digital-c4070">Digital - C4070</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="offset-sm74" name="outputType" value="Offset - SM74"
+                                   {% if past_order and past_order.outputInfo.outputType == 'Offset - SM74' %}checked{% endif %}>
+                            <label for="offset-sm74">Offset - SM74</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="digital-c1400" name="outputType" value="Digital - C1400"
+                                   {% if past_order and past_order.outputInfo.outputType == 'Digital - C1400' %}checked{% endif %}>
+                            <label for="digital-c1400">Digital - C1400</label>
+                        </div>
+                        
+                
+                    </div>
+                </div>
+
+
+                <!-- Service Settings -->
+                <div class="form-section digital-c1400 digital-c4070 selectt">
+                    <h3>Print Settings</h3>
+                    <div class="form-group">
+                        <!-- COLORPRINT -->
+                        <div class="digital-c1400 digital-c4070 selectt">
+                            <label>COLORPRINT:</label>
+                            <select class="form-control" name="colorprint_optionid">
+                                <option value="ON" {% if past_order and past_order.serviceSettings.COLORPRINT.optionId == 'ON' %}selected{% elif not past_order %}selected{% endif %}>ON</option>
+                                <option value="OFF" {% if past_order and past_order.serviceSettings.COLORPRINT.optionId == 'OFF' %}selected{% endif %}>OFF</option>
+                            </select>
+                            <!-- <div class="service-options">
+                                <div>
+                                    <label>Option ID:</label>
+                                    <select class="form-control" name="colorprint_optionid">
+                                        <option value="ON" {% if past_order and past_order.serviceSettings.COLORPRINT.optionId == 'ON' %}selected{% elif not past_order %}selected{% endif %}>ON</option>
+                                        <option value="OFF" {% if past_order and past_order.serviceSettings.COLORPRINT.optionId == 'OFF' %}selected{% endif %}>OFF</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Option Name:</label>
+                                    <input type="text" class="form-control" name="colorprint_optionname" value="{{past_order.serviceSettings.COLORPRINT.optionName if past_order else request.form['colorprint_optionname']}}">
+                                </div>
+                            </div> -->
+                        </div>
+
+                        
+                        <!-- DUPLEX -->
+                        <div class="digital-c1400 digital-c4070 selectt">
+                            <label>DUPLEX:</label>
+                            <select class="form-control" name="duplex_optionid">
+                                <option value="ON"  {% if past_order and past_order.serviceSettings.DUPLEX.optionId == 'ON' %}selected{% elif not past_order %}selected{% endif %}>ON</option>
+                                <option value="ONTUMBLE" {% if past_order and past_order.serviceSettings.DUPLEX.optionId == 'ONTUMBLE' %}selected{% endif %}>ONTUMBLE</option>
+                                <option value="OFF"  {% if past_order and past_order.serviceSettings.DUPLEX.optionId == 'OFF' %}selected{% endif %}>OFF</option>
+                            </select>
+                            <!-- <div class="service-options">
+                                <div>
+                                    <label>Option ID:</label>
+                                    <select class="form-control" name="duplex_optionid">
+                                        <option value="ON"  {% if past_order and past_order.serviceSettings.DUPLEX.optionId == 'ON' %}selected{% elif not past_order %}selected{% endif %}>ON</option>
+                                        <option value="ONTUMBLE" {% if past_order and past_order.serviceSettings.DUPLEX.optionId == 'ONTUMBLE' %}selected{% endif %}>ONTUMBLE</option>
+                                        <option value="OFF"  {% if past_order and past_order.serviceSettings.DUPLEX.optionId == 'OFF' %}selected{% endif %}>OFF</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Option Name:</label>
+                                    <input type="text" class="form-control" name="duplex_optionname"  value="{{past_order.serviceSettings.DUPLEX.optionName if past_order else request.form['duplex_optionname']}}">
+                                </div>
+                            </div> -->
+                        </div>
+
+                        <!-- BINDINGPOSITION -->
+                        <div class="digital-c1400 digital-c4070 selectt">
+                            <label>BINDINGPOSITION:</label>
+                            <select class="form-control" name="bindingposition_optionid">
+                                <option value="LEFT"  {% if past_order and past_order.serviceSettings.BINDINGPOSITION.optionId == 'LEFT' %}selected{% elif not past_order %}selected{% endif %}>LEFT</option>
+                                <option value="TOP" {% if past_order and past_order.serviceSettings.BINDINGPOSITION.optionId == 'TOP' %}selected{% endif %}>TOP</option>
+                                <option value="RIGHT" {% if past_order and past_order.serviceSettings.BINDINGPOSITION.optionId == 'RIGHT' %}selected{% endif %}>RIGHT</option>
+                                <option value="BOTTOM" {% if past_order and past_order.serviceSettings.BINDINGPOSITION.optionId == 'BOTTOM' %}selected{% endif %}>BOTTOM</option>
+                            </select>
+                            <!-- <div class="service-options">
+                                <div>
+                                    <label>Option ID:</label>
+                                    <select class="form-control" name="bindingposition_optionid">
+                                        <option value="LEFT"  {% if past_order and past_order.serviceSettings.BINDINGPOSITION.optionId == 'LEFT' %}selected{% elif not past_order %}selected{% endif %}>LEFT</option>
+                                        <option value="TOP" {% if past_order and past_order.serviceSettings.BINDINGPOSITION.optionId == 'TOP' %}selected{% endif %}>TOP</option>
+                                        <option value="RIGHT" {% if past_order and past_order.serviceSettings.BINDINGPOSITION.optionId == 'RIGHT' %}selected{% endif %}>RIGHT</option>
+                                        <option value="BOTTOM" {% if past_order and past_order.serviceSettings.BINDINGPOSITION.optionId == 'BOTTOM' %}selected{% endif %}>BOTTOM</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Option Name:</label>
+                                    <input type="text" class="form-control" name="bindingposition_optionname" value="{{past_order.serviceSettings.BINDINGPOSITION.optionName if past_order else request.form['bindingposition_optionname']}}">
+                                </div>
+                            </div> -->
+                        </div>
+
+                        <!-- PAGEFITTING -->
+                        <div class="digital-c1400 digital-c4070 selectt">
+                            <label>PAGEFITTING:</label>
+                            <select class="form-control" name="pagefitting_optionid">
+                                <option value="LEFT" {% if past_order and past_order.serviceSettings.PAGEFITTING.optionId == 'LEFT' %}selected{% elif not past_order %}selected{% endif %}>LEFT</option>
+                                <option value="TOP" {% if past_order and past_order.serviceSettings.PAGEFITTING.optionId == 'TOP' %}selected{% endif %}>TOP</option>
+                                <option value="RIGHT" {% if past_order and past_order.serviceSettings.PAGEFITTING.optionId == 'RIGHT' %}selected{% endif %}>RIGHT</option>
+                                <option value="BOTTOM" {% if past_order and past_order.serviceSettings.PAGEFITTING.optionId == 'RIGHT' %}selected{% endif %}>BOTTOM</option>
+                            </select>
+                            <!-- <div class="service-options">
+                                <div>
+                                    <label>Option ID:</label>
+                                    <select class="form-control" name="pagefitting_optionid">
+                                        <option value="LEFT" {% if past_order and past_order.serviceSettings.PAGEFITTING.optionId == 'LEFT' %}selected{% elif not past_order %}selected{% endif %}>LEFT</option>
+                                        <option value="TOP" {% if past_order and past_order.serviceSettings.PAGEFITTING.optionId == 'TOP' %}selected{% endif %}>TOP</option>
+                                        <option value="RIGHT" {% if past_order and past_order.serviceSettings.PAGEFITTING.optionId == 'RIGHT' %}selected{% endif %}>RIGHT</option>
+                                        <option value="BOTTOM" {% if past_order and past_order.serviceSettings.PAGEFITTING.optionId == 'RIGHT' %}selected{% endif %}>BOTTOM</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Option Name:</label>
+                                    <input type="text" class="form-control" name="pagefitting_optionname" value="{{past_order.serviceSettings.PAGEFITTING.optionName if past_order else request.form['pagefitting_optionname']}}">
+                                </div>
+                            </div> -->
+                        </div>
+
+                        <!-- PAPERTYPE -->
+                        <div class="digital-c1400 digital-c4070 selectt">
+                            <label>PAPERTYPE:</label>
+                            <select class="form-control" name="papertype_optionid">
+                                <option value="Printer default" {% if past_order and past_order.serviceSettings.PAPERTYPE.optionId == 'Printer default' %}selected{% elif not past_order %}selected{% endif %}>Printer default</option>
+                                <option value="White, 80g/m2" {% if past_order and past_order.serviceSettings.PAPERTYPE.optionId == 'White, 80g/m2' %}selected{% endif %}>White, 80g/m2</option>
+                                <option value="White, 200g/m2, Colorcopy" {% if past_order and past_order.serviceSettings.PAPERTYPE.optionId == 'White, 200g/m2, Colorcopy' %}selected{% endif %}>White, 200g/m2, Colorcopy</option>
+                            </select>
+                            <!-- <div class="service-options">
+                                <div>
+                                    <label>Option ID:</label>
+                                    <select class="form-control" name="papertype_optionid">
+                                        <option value="Printer default" {% if past_order and past_order.serviceSettings.PAPERTYPE.optionId == 'Printer default' %}selected{% elif not past_order %}selected{% endif %}>Printer default</option>
+                                        <option value="White, 80g/m2" {% if past_order and past_order.serviceSettings.PAPERTYPE.optionId == 'White, 80g/m2' %}selected{% endif %}>White, 80g/m2</option>
+                                        <option value="White, 200g/m2, Colorcopy" {% if past_order and past_order.serviceSettings.PAPERTYPE.optionId == 'White, 200g/m2, Colorcopy' %}selected{% endif %}>White, 200g/m2, Colorcopy</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Option Name:</label>
+                                    <input type="text" class="form-control" name="papertype_optionname" value="{{past_order.serviceSettings.PAPERTYPE.optionName if past_order else request.form['papertype_optionname']}}">
+                                </div>
+                            </div> -->
+                        </div>
+
+                       
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="button-group">
+            <a href="{{ url_for('csrform_step1') }}" class="back-button">Back</a>
+            <button type="submit" class="submit-button">Submit</button>
+        </div>
+    </form>
+</div>
+
+<!-- If you have any navigation links -->
+<!-- <div class="navigation">
+    <a href="{{ url_for('welcome') }}">Back to Welcome</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</div> -->
+
+
+<script type="text/javascript">
+    
+    $(document).ready(function () {
+        // Hide all selectt classes initially
+        $(".selectt").hide();
+
+        // Check if there's a checked radio on page load
+        const checkedRadio = $('input[name="outputType"]:checked');
+        if (checkedRadio.length > 0) {
+            const selectedValue = checkedRadio.attr("id");
+            $("." + selectedValue).show();
+        }
+    
+
+        $('input[type="radio"]').
+        click(
+            function () {
+                const inputValue = 
+                $(this).attr("id");
+                const targetBox = 
+                $("." + inputValue);
+                $(".selectt").
+                not(targetBox).css('display', 'none');
+                $(targetBox).css('display', 'block');
+            }
+        );
+    }); 
+</script>
+
+<style>
+    .radio-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .radio-option {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    .radio-option:hover {
+        background-color: #f8fafc;
+    }
+
+    .radio-option input[type="radio"] {
+        margin: 0;
+    }
+
+    .radio-option label {
+        margin: 0;
+        cursor: pointer;
+    }
+</style>
+{% endblock %}

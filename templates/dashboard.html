@@ -1,0 +1,155 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block extra_styles %}
+<style>
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card h3 {
+        color: #718096;
+        font-size: 0.9rem;
+        margin: 0 0 10px 0;
+    }
+
+    .stat-card .number {
+        color: #2d3748;
+        font-size: 2rem;
+        font-weight: bold;
+    }
+
+    .charts-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 20px;
+    }
+
+    .chart-card {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-card h2 {
+        color: #2d3748;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+    }
+
+    .welcome-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .welcome-header h1 {
+        color: #1a365d;
+        margin: 0;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+    }
+
+    .action-button {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+    .primary-button {
+        background-color: #4299e1;
+        color: white;
+    }
+
+    .secondary-button {
+        background-color: #718096;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-area">
+    <div class="dashboard-container">
+        <div class="welcome-header">
+            <h1>Dashboard</h1>
+            
+        </div>
+
+        <div class="stats-cards">
+            <div class="stat-card">
+                <h3>Total Orders</h3>
+                <div class="number">{{ total_orders }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Orders This Month</h3>
+                <div class="number">{{ monthly_orders }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Orders</h3>
+                <div class="number">{{ active_orders }}</div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card">
+                <h2>Orders by Product Type</h2>
+                <canvas id="productTypeChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Product Type Pie Chart
+    const productTypeCtx = document.getElementById('productTypeChart').getContext('2d');
+    new Chart(productTypeCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ product_types|tojson }},
+            datasets: [{
+                data: {{ product_counts|tojson }},
+                backgroundColor: [
+                    '#4299E1',
+                    '#48BB78',
+                    '#ED8936',
+                    '#9F7AEA',
+                    '#F56565',
+                    '#38B2AC'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

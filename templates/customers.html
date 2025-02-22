@@ -1,0 +1,207 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block extra_styles %}
+<style>
+    .content-area {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .table-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        width: calc(100% - 40px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .customers-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        table-layout: fixed;
+    }
+
+    .customers-table th {
+        background-color: #f7fafc;
+        padding: 12px 8px;
+        text-align: left;
+        color: #4a5568;
+        font-weight: 600;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .customers-table td {
+        padding: 12px 8px;
+        border-bottom: 1px solid #e2e8f0;
+        color: #2d3748;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .customers-table tr:hover {
+        background-color: #f7fafc;
+        cursor: pointer;
+    }
+
+    /* Column widths */
+    .customers-table th:nth-child(1), .customers-table td:nth-child(1) { width: 15%; } /* Username */
+    .customers-table th:nth-child(2), .customers-table td:nth-child(2) { width: 20%; } /* Email */
+    .customers-table th:nth-child(3), .customers-table td:nth-child(3) { width: 20%; } /* Company */
+    .customers-table th:nth-child(4), .customers-table td:nth-child(4) { width: 15%; } /* Contact */
+    .customers-table th:nth-child(5), .customers-table td:nth-child(5) { width: 15%; } /* Phone */
+    .customers-table th:nth-child(6), .customers-table td:nth-child(6) { width: 15%; } /* Status */
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        align-items: center;
+    }
+
+    .page-button {
+        padding: 8px 16px;
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+
+    .page-button:disabled {
+        background-color: #cbd5e0;
+        cursor: not-allowed;
+    }
+
+    .page-info {
+        color: #4a5568;
+        font-size: 0.85rem;
+    }
+
+    .search-section {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        width: calc(100% - 40px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+
+    .search-button {
+        padding: 8px 16px;
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .clear-button {
+        padding: 8px 16px;
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+
+    .export-button {
+        padding: 8px 16px;
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-area">
+    <div class="search-section">
+        <form method="GET" style="display: flex; gap: 15px; width: 100%;">
+            <input type="text" name="search" class="search-input" 
+                   placeholder="Search customers..." 
+                   value="{{ search_query }}">
+            <button type="submit" class="search-button">Search</button>
+            {% if search_query %}
+                <a href="{{ url_for('customers') }}" class="clear-button">Clear</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="clear-button">Add Users</a>
+            {% endif %}
+            <a href="{{ url_for('export_customers_csv', search=search_query) }}" 
+               class="export-button" style="text-decoration: none;">Export to CSV</a>
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table class="customers-table">
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Contact Person</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Cost Center</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for customer in customers %}
+                <tr onclick="window.location='{{ url_for('customer_details', username=customer.username) }}'">
+                    <td>{{ customer.company }}</td>
+                    <td>{{ customer.username }}</a></td>
+                    <td>{{ customer.address }}</td>
+                    <td>{{ customer.email }}</td>
+                    <td>{{ customer.telNo }}</td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('customers', page=page-1) }}" class="page-button">Previous</a>
+            {% else %}
+                <button class="page-button" disabled>Previous</button>
+            {% endif %}
+
+            <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+
+            {% if page < total_pages %}
+                <a href="{{ url_for('customers', page=page+1) }}" class="page-button">Next</a>
+            {% else %}
+                <button class="page-button" disabled>Next</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

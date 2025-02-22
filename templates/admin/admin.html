@@ -1,0 +1,416 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block extra_styles %}
+<style>
+    .content-area {
+        max-width: 1200px;  /* Match the admin_base container width */
+        margin: 0 auto;     /* Center the content */
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .filter-section {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        width: calc(100% - 40px);  /* Account for padding */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .date-input {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .date-input label {
+        font-size: 0.85rem;
+        color: #4a5568;
+    }
+
+    .status-input label, .job-input label, .search-input label {
+        font-size: 0.85rem;
+        color: #4a5568;
+    }
+
+    .date-input input {
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+    }
+
+    .filter-button {
+        padding: 8px 16px;
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .export-button {
+        padding: 8px 16px;
+        background-color: #48bb78;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .table-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        width: calc(100% - 40px);  /* Match filter section width */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem; /* Even smaller font */
+        table-layout: fixed; /* Fixed table layout */
+    }
+
+    .orders-table th {
+        background-color: #f7fafc;
+        padding: 8px 4px; /* Reduced padding */
+        text-align: left;
+        color: #4a5568;
+        font-weight: 600;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .orders-table td {
+        padding: 8px 4px; /* Reduced padding */
+        border-bottom: 1px solid #e2e8f0;
+        color: #2d3748;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .advancedFilters, #advancedFilters{
+        display: none;
+    }
+
+
+
+    /* Column widths */
+    .orders-table th:nth-child(1), .orders-table td:nth-child(2) { width: 11%; } /* PO */
+    /* .orders-table th:nth-child(1), .orders-table td:nth-child(1) { width: 8%; } Order Name */
+    .orders-table th:nth-child(2), .orders-table td:nth-child(2) { width: 11%; } /* Order ID */
+    .orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 11%; } /* Company */
+    .orders-table th:nth-child(4), .orders-table td:nth-child(4) { width: 11%; } /* Contact */
+    /* .orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 10%; } Email */
+    /* .orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 8%; } Job Name */
+    .orders-table th:nth-child(5), .orders-table td:nth-child(6) { width: 11%; } /* Notes */
+    .orders-table th:nth-child(6), .orders-table td:nth-child(6) { width: 11%; } /* total */
+    /* .orders-table th:nth-child(7), .orders-table td:nth-child(7) { width: 7%; } Job Type */
+    /* .orders-table th:nth-child(8), .orders-table td:nth-child(8) { width: 5%; } QTY */
+    .orders-table th:nth-child(7), .orders-table td:nth-child(9) { width: 11%; } /* Date Ordered */
+    /* .orders-table th:nth-child(10), .orders-table td:nth-child(10) { width: 7%; } Delivery Type */
+    .orders-table th:nth-child(8), .orders-table td:nth-child(11) { width: 11%; } /* Delivery Date */
+    .orders-table th:nth-child(9), .orders-table td:nth-child(12) { width: 11%; } /* Status */
+
+    .orders-table tr:hover {
+        background-color: #f7fafc;
+        cursor: pointer;
+    }
+
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        align-items: center;
+    }
+
+    .page-button {
+        padding: 8px 16px;
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+
+    .page-button:disabled {
+        background-color: #cbd5e0;
+        cursor: not-allowed;
+    }
+
+    .page-info {
+        color: #4a5568;
+        font-size: 0.85rem;
+    }
+
+
+
+    /* Add tooltips for truncated content */
+    .orders-table td {
+        position: relative;
+    }
+
+    .orders-table td:hover::after {
+        content: attr(data-full-text);
+        position: absolute;
+        left: 0;
+        top: 100%;
+        background: #2d3748;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        z-index: 1;
+        white-space: normal;
+        max-width: 200px;
+        display: none;
+    }
+
+    .orders-table td[data-full-text]:hover::after {
+        display: block;
+    }
+
+    .clear-button {
+        padding: 8px 16px;
+        background-color: #e53e3e;  /* Red color */
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .clear-button:hover {
+        background-color: #c53030;
+    }
+
+    .company-input, .status-input, .job-input, .search-input {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .company-input label, .status-input label, .job-input label {
+        font-size: 0.85rem;
+        color: #4a5568;
+    }
+
+    .search-input input{
+        min-width: 500px;
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 0.85rem;
+    }
+
+    .form-select {
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        min-width: 200px;
+        font-size: 0.85rem;
+    }
+   /* new */
+  
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-area">
+    <div class="filter-section">
+        <form method="GET" class="date-filter-form" style="display: block; gap: 15px; align-items: flex-end;">
+            <div style="display: flex; gap: 15px; align-items: flex-end;">
+                <div class="date-input">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" value="{{ start_date if start_date }}">
+                </div>
+                <div class="date-input">
+                    <label for="end_date">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ end_date if end_date }}">
+                </div>
+                <div class="company-input">
+                    <label for="company">Company:</label>
+                    <select id="company" name="company" class="form-select">
+                        <option value="">All Companies</option>
+                        {% for company in companies %}
+                            <option value="{{ company.id }}" {% if selected_company == company.id %}selected{% endif %}>
+                                {{ company.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="button" id="advancedFilterToggle" class="filter-button">
+                    <i class="fas fa-filter"></i> Advanced Filter
+                </button>
+            
+                <button type="submit" class="filter-button">Search</button>
+                {% if start_date or end_date or selected_company or selected_status or search_query%}
+                    <a href="{{ url_for('welcome') }}" class="clear-button">Clear Filter</a>
+                {% endif %}
+                <!-- <a href="{{ url_for('export_csv', start_date=start_date, end_date=end_date, company=selected_company) }}" 
+                class="export-button" style="text-decoration: none;">Export to CSV</a> -->
+                <a href="#" onclick="exportToCSV(event)" class="export-button" style="text-decoration: none;">Export to CSV</a>
+                
+            </div>
+            <div id="advancedFilters"  style="display: flex; gap: 15px; padding-top: 5px; align-items: flex-end;">
+                <!-- <div class="status-input">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status" class="form-select">
+                        <option value="" >All</option>
+                        <option value="Cancelled"  {% if selected_status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+                        <option value="Completed" {% if selected_status == "Completed" %}selected{% endif %}>Completed</option>
+                        <option value="Pending" {% if selected_status == "Pending" %}selected{% endif %}>Pending</option>
+                        <option value="In Progress" {% if selected_status == "In Progress" %}selected{% endif %}>In Progress</option>
+                    </select>
+                </div>
+                <div class="job-input">
+                    <label for="productType">Job Type:</label>
+                    <select name="productType" id="productType" class="form-select" >
+                        <option value="">All</option>
+                        <option value="Booklet" >Booklet</option>
+                        <option value="Business Card" >Business Card</option>
+                        <option value="Letterhead" >Letterhead</option>
+                        <option value="Magazine" >Magazine</option>
+                    </select>
+                </div> -->
+                <div class="search-input">
+                    <label for="productType">Search Orders:</label>
+                    <input type="text" name="search" class="search-input" 
+                    placeholder="Search in all fields...." 
+                    value="{{ search_query }}">
+                </div>
+                
+            </div>
+
+            
+        </form>
+    </div>
+
+    <div class="table-container">
+        <table class="orders-table">
+            <thead>
+                <tr>
+                    <!-- <th>Order Name</th> -->
+                    <th>PO#</th>
+                    <th>Order ID</th>
+                    <th>Company</th>
+                    <th>Contact</th>
+                    <!-- <th>Email</th> -->
+                    <!-- <th>Job Name</th> -->
+                    <th>Order Notes</th>
+                    <th>Total</th>
+                    <!-- <th>Job Type</th> -->
+                    <!-- <th>QTY</th> -->
+                    <th>Created Date</th>
+                    <!-- <th>Del. Type</th> -->
+                    <th>Delivery Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr onclick="window.location='{{ url_for('view_order', order_id=order._id) }}'">
+                    <!-- <td data-full-text="{{ order.orderInfo.order }}">{{ order.orderInfo.productName }}</td> -->
+                    <td></td>
+                    <td>{{ order.orderInfo.orderId }}</td>
+                    <td>{{ order.company }}</td>
+                    <td data-full-text="{{ order.customerInfo.contactPerson }}">{{ order.customerInfo.contactPerson }}</td>
+                    <!-- <td data-full-text="{{ order.customerInfo.email }}">{{ order.customerInfo.email }}</td> -->
+                    <!-- <td data-full-text="{{ order.jobInfo.name }}">{{ order.jobInfo.name }}</td> -->
+                    <td data-full-text="{{ order.jobInfo.notes }}">{{ order.jobInfo.notes }}</td>
+                    <td></td>
+                    
+                    <!-- <td data-full-text="{{ order.jobInfo.productType }}">{{ order.jobInfo.productType }}</td> -->
+                    <!-- <td>{{ order.orderInfo.quantity }}</td> -->
+                    <td data-full-text="{{ order.orderInfo.orderDate }}">{{ order.orderInfo.orderDate }}</td>
+                    <!-- <td>{{ order.orderInfo.deliveryType }}</td> -->
+                    <td>{{ order.orderInfo.deliveryDate }}</td>
+                    <td>{{ order.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="pagination">
+            {% if page > 1 %}
+                <a href="{{ url_for('welcome', page=page-1) }}" class="page-button">Previous</a>
+            {% else %}
+                <button class="page-button" disabled>Previous</button>
+            {% endif %}
+
+            <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+
+            {% if page < total_pages %}
+                <a href="{{ url_for('welcome', page=page+1) }}" class="page-button">Next</a>
+            {% else %}
+                <button class="page-button" disabled>Next</button>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script>
+  
+    document.addEventListener('DOMContentLoaded', function() {
+    const toggleButton = document.getElementById('advancedFilterToggle');
+    const advancedFilters = document.getElementById('advancedFilters');
+
+    // Set initial states
+    advancedFilters.style.display = 'none';
+    toggleButton.classList.remove('active');
+
+    // Check URL parameters to see if advanced filters are being used
+    const urlParams = new URLSearchParams(window.location.search);
+    const hasAdvancedFilters = (urlParams.get('status') && urlParams.get('status').trim() !== '') || 
+                              (urlParams.get('product_type') && urlParams.get('product_type').trim() !== '') || 
+                              (urlParams.get('search') && urlParams.get('search').trim() !== '');
+    
+    // If advanced filters are being used, show the section
+    if (hasAdvancedFilters) {
+        advancedFilters.style.display = 'flex';
+        toggleButton.classList.add('active');
+    }
+
+    toggleButton.addEventListener('click', function() {
+        const isVisible = advancedFilters.style.display !== 'none';
+        advancedFilters.style.display = isVisible ? 'none' : 'flex';
+        toggleButton.classList.toggle('active');
+    });
+    });
+
+    function exportToCSV(event) {
+        event.preventDefault();
+        const start_date = document.getElementById('start_date').value;
+        const end_date = document.getElementById('end_date').value;
+        const company = document.getElementById('company').value;
+        
+        let exportUrl = "{{ url_for('export_csv') }}?";
+        if (start_date) exportUrl += `start_date=${start_date}&`;
+        if (end_date) exportUrl += `end_date=${end_date}&`;
+        if (company) exportUrl += `company=${company}`;
+        // console.log(exportUrl);
+        window.location.href = exportUrl;
+    }
+</script>
+{% endblock %} 

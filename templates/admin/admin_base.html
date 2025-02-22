@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel - Konica Minolta</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            font-family: Arial, sans-serif;
+        }
+        img{
+            height: 50%;
+            width: 50%;
+        }
+
+        .admin-container {
+            padding: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .welcome-text {
+            color: #1a365d;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo {
+            height: 40px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-button {
+            padding: 12px 24px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #3182ce;
+        }
+
+        .nav-button.logout {
+            background-color: #718096;
+        }
+
+        .nav-button.logout:hover {
+            background-color: #4a5568;
+        }
+
+        .nav-button.active {
+            background-color: #2c5282;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-wrap: wrap;
+            }
+
+            .nav-button {
+                flex: 1;
+                text-align: center;
+                min-width: 120px;
+            }
+        }
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background-color: #1a4d6d;
+            padding-top: 5px;
+            color: white;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .sidebar-nav a {
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            font-size: 16px;
+        }
+
+        .sidebar-nav a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav a.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            /* background-color: #1a4d6d; */
+            background-color: #f0f4f8;
+            min-height: 100vh;
+        }
+
+        /* Logo area */
+        .logo-area {
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-area img {
+            max-width: 150px;
+            height: auto;
+        }
+    </style>
+    {% block extra_styles %}{% endblock %}
+</head>
+<body>
+ 
+
+        <div class="sidebar">
+            <div class="logo-area">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo">
+                <br>
+                <a style="padding-top: 15%; margin-top: 15%;">Generic Printing Solutions</a>
+                <br><br>
+                <a style="padding-top: 15%; margin-top: 15%;">PRINT ORDER MANAGEMENT SYSTEM</a>
+
+            </div>
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('welcome') }}" {% if request.endpoint == 'welcome' %}class="active"{% endif %}>
+                    Orders
+                </a>
+                <a href="{{ url_for('management') }}" {% if request.endpoint == 'management' %}class="active"{% endif %}>
+                    Production
+                </a>
+                <a href="{{ url_for('reports') }}" {% if request.endpoint == 'dashboard' %}class="active"{% endif %}>
+                    Dashboard
+                </a>
+                <a href="{{ url_for('customers') }}" {% if request.endpoint == 'customers' %}class="active"{% endif %}>
+                    Customers
+                </a>
+                <a href="">
+                    Inventory
+                </a>
+                <a href="">
+                    Reports
+                </a>
+                <a href="">
+                    Estimate
+                </a>
+                <a href="">
+                    Invoice
+                </a>
+                <a href="{{ url_for('logout') }}">
+                    Logout
+                </a>
+          
+          
+            </nav>
+        </div>
+        
+        </div>
+
+        <div class="main-content">
+            {% block content %}{% endblock %}
+        </div>
+
+</body>
+</html> 

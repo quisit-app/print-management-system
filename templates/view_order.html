@@ -1,0 +1,256 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f0f4f8;
+    }
+
+    .view-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 30px;
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .logo {
+        height: 40px;
+    }
+
+    .back-button {
+        padding: 10px 20px;
+        background-color: #718096;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        color: #005aab;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .info-item {
+        margin-bottom: 15px;
+        display: flex;
+    }
+
+    .label {
+        color: #4a5568;
+        font-weight: 500;
+        width: 140px;
+        flex-shrink: 0;
+    }
+
+    .value {
+        color: #2d3748;
+        flex-grow: 1;
+    }
+
+    .status-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 2px solid #005aab;
+        grid-column: span 2;
+    }
+
+    .status-form {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .status-select {
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        width: 200px;
+    }
+
+    .submit-button {
+        padding: 10px 20px;
+        background-color: #005aab;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .flash-message {
+        padding: 12px 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        background-color: #48bb78;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .grid-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .status-card {
+            grid-column: span 1;
+        }
+    }
+</style>
+
+<div class="view-container">
+    <!-- <div class="header">
+        <a href="{{ url_for('welcome') }}" class="back-button">← Back to List</a>
+        <img src="{{ url_for('static', filename='images/Konica_Minolta_logo.png') }}" alt="Konica Minolta Logo" class="logo">
+    </div> -->
+
+
+
+    <div class="grid-container">
+        <div class="card">
+            <h2 class="card-title">Customer Information</h2>
+            <div class="info-item">
+                <span class="label">Contact Person:</span>
+                <span class="value">{{ order.customerInfo.contactPerson or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Email:</span>
+                <span class="value">{{ order.customerInfo.email or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Telephone:</span>
+                <span class="value">{{ order.customerInfo.telNo or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Address:</span>
+                <span class="value">{{ order.customerInfo.address or 'N/A' }}</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">Order Information</h2>
+            <div class="info-item">
+                <span class="label">Order ID:</span>
+                <span class="value">{{ order.orderInfo.orderId or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Product Name:</span>
+                <span class="value">{{ order.orderInfo.productName or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Delivery Date:</span>
+                <span class="value">{{ order.orderInfo.deliveryDate or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Quantity:</span>
+                <span class="value">{{ order.orderInfo.quantity or 'N/A' }}</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">Job Information</h2>
+            <div class="info-item">
+                <span class="label">Job Name:</span>
+                <span class="value">{{ order.jobInfo.name or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Job ID:</span>
+                <span class="value">{{ order.jobInfo.id or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Product Type:</span>
+                <span class="value">{{ order.jobInfo.productType or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Pages:</span>
+                <span class="value">{{ order.jobInfo.numberOfPages or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Notes:</span>
+                <span class="value">{{ order.jobInfo.notes or 'N/A' }}</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2 class="card-title">Service Settings</h2>
+            <div class="info-item">
+                <span class="label">Color Print:</span>
+                <span class="value">{{ order.serviceSettings.COLORPRINT.optionId or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Duplex:</span>
+                <span class="value">{{ order.serviceSettings.DUPLEX.optionId or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Binding:</span>
+                <span class="value">{{ order.serviceSettings.BINDINGPOSITION.optionId or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Page Fitting:</span>
+                <span class="value">{{ order.serviceSettings.PAGEFITTING.optionId or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Paper Type:</span>
+                <span class="value">{{ order.serviceSettings.PAPERTYPE.optionId or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Punch:</span>
+                <span class="value">{{ order.serviceSettings.PUNCH.optionId or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Staple:</span>
+                <span class="value">{{ order.serviceSettings.STAPLE.optionId or 'N/A' }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Fold:</span>
+                <span class="value">{{ order.serviceSettings.FOLD.optionId or 'N/A' }}</span>
+            </div>
+        </div>
+
+        <div class="status-card">
+            <h2 class="card-title">Order Status</h2>
+            <form method="POST" class="status-form">
+                <select name="status" class="status-select"  required >
+                    <option value="" style="color: black;">Select Status</option>
+                    <option value="Job Created - Error" {% if order.status == 'Job Created - Error' %}selected{% endif %} style="color: red;">Job Created</option>
+                    <option value="Job Created - Warning" {% if order.status == 'Job Created - Warning' %}selected{% endif %} style="color: burlywood;">Job Created</option>
+                    <option value="Job Created - Completed" {% if order.status == 'Job Created - Completed' %}selected{% endif %} style="color: green;">Job Created</option>
+                    <option value="Checking Job" {% if order.status == 'Checking Job' %}selected{% endif %} style="color: black;">Checking Job</option>
+                    <option value="Proof Print" {% if order.status == 'Proof Print' %}selected{% endif %} style="color: black;">Proof Print</option>
+                    <option value="Printing" {% if order.status == 'Printing' %}selected{% endif %} style="color: black;">Printing</option>
+                    <option value="Billing" {% if order.status == 'Billing' %}selected{% endif %} style="color: black;">Billing</option>
+                    <option value="Delivery" {% if order.status == 'Delivery' %}selected{% endif %} style="color: black;">Delivery</option>
+                </select>
+                <button type="submit" class="submit-button">Update Status</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %} 

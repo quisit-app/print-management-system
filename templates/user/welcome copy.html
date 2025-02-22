@@ -1,0 +1,340 @@
+{% extends 'customer_base.html' %}
+
+{% block content %}
+<style>
+    .welcome-container {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .welcome-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .welcome-header h1 {
+        color: #1a365d;
+        margin: 0;
+    }
+
+    .page-link {
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 4px;
+        color: #4299e1;
+        text-decoration: none;
+    }
+
+    .page-link.active {
+        background-color: #4299e1;
+        color: white;
+        border-color: #4299e1;
+    }
+
+    .page-link:hover:not(.active) {
+        background-color: #f7fafc;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+
+    .action-button {
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .primary-button {
+        background-color: #4299e1;
+        color: white;
+    }
+
+    .secondary-button {
+        background-color: #718096;
+        color: white;
+    }
+
+    .clickable-row {
+        cursor: pointer;
+    }
+
+    .clickable-row:hover {
+        background-color: #edf2f7;
+    }
+    .content-area {
+        max-width: 1200px;  /* Match the admin_base container width */
+        margin: 0 auto;     /* Center the content */
+        background: transparent;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .filter-section {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        width: calc(100% - 40px);  /* Account for padding */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .date-input {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .date-input label {
+        font-size: 0.85rem;
+        color: #4a5568;
+    }
+
+    .date-input input {
+        padding: 8px 12px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+    }
+
+    .filter-button {
+        padding: 8px 16px;
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .export-button {
+        padding: 8px 16px;
+        background-color: #48bb78;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+    }
+
+    .table-container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        width: calc(100% - 40px);  /* Match filter section width */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .orders-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.75rem; /* Even smaller font */
+        table-layout: fixed; /* Fixed table layout */
+    }
+
+    .orders-table th {
+        background-color: #f7fafc;
+        padding: 8px 4px; /* Reduced padding */
+        text-align: left;
+        color: #4a5568;
+        font-weight: 600;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    .orders-table td {
+        padding: 8px 4px; /* Reduced padding */
+        border-bottom: 1px solid #e2e8f0;
+        color: #2d3748;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Column widths */
+    .orders-table th:nth-child(1), .orders-table td:nth-child(1) { width: 8%; } /* Order Name */
+    .orders-table th:nth-child(2), .orders-table td:nth-child(2) { width: 6%; } /* Order ID */
+    .orders-table th:nth-child(3), .orders-table td:nth-child(3) { width: 8%; } /* Company */
+    .orders-table th:nth-child(4), .orders-table td:nth-child(4) { width: 8%; } /* Contact */
+    /* .orders-table th:nth-child(5), .orders-table td:nth-child(5) { width: 10%; } Email */
+    .orders-table th:nth-child(6), .orders-table td:nth-child(6) { width: 8%; } /* Job Name */
+    .orders-table th:nth-child(7), .orders-table td:nth-child(7) { width: 10%; } /* Notes */
+    .orders-table th:nth-child(8), .orders-table td:nth-child(8) { width: 7%; } /* Job Type */
+    .orders-table th:nth-child(9), .orders-table td:nth-child(9) { width: 5%; } /* QTY */
+    .orders-table th:nth-child(10), .orders-table td:nth-child(10) { width: 7%; } /* Date Ordered */
+    .orders-table th:nth-child(11), .orders-table td:nth-child(11) { width: 7%; } /* Delivery Type */
+    .orders-table th:nth-child(12), .orders-table td:nth-child(12) { width: 8%; } /* Delivery Date */
+    .orders-table th:nth-child(13), .orders-table td:nth-child(13) { width: 8%; } /* Status */
+
+    .orders-table tr:hover {
+        background-color: #f7fafc;
+        cursor: pointer;
+    }
+
+    
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        align-items: center;
+    }
+
+    .page-button {
+        padding: 8px 16px;
+        background-color: #4299e1;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        text-decoration: none;
+    }
+
+    .page-button:disabled {
+        background-color: #cbd5e0;
+        cursor: not-allowed;
+    }
+
+    .page-info {
+        color: #4a5568;
+        font-size: 0.85rem;
+    }
+
+
+
+    /* Add tooltips for truncated content */
+    .orders-table td {
+        position: relative;
+    }
+
+    .orders-table td:hover::after {
+        content: attr(data-full-text);
+        position: absolute;
+        left: 0;
+        top: 100%;
+        background: #2d3748;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        z-index: 1;
+        white-space: normal;
+        max-width: 200px;
+        display: none;
+    }
+
+    .orders-table td[data-full-text]:hover::after {
+        display: block;
+    }
+
+    .clear-button {
+        padding: 8px 16px;
+        background-color: #e53e3e;  /* Red color */
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .clear-button:hover {
+        background-color: #c53030;
+    }
+</style>
+
+<div class="welcome-container">
+    <div class="welcome-header">
+        <h1>Welcome back, {{ username }}!</h1>
+        <img src="{{ url_for('static', filename='images/Konica_Minolta_logo.png') }}" alt="Konica Minolta Logo" style="height: 40px;">
+    </div>
+
+    <div class="action-buttons">
+        <a href="{{ url_for('csrform_step1') }}" class="action-button primary-button">Create New Job</a>
+        <a href="{{ url_for('logout') }}" class="action-button secondary-button">Logout</a>
+    </div>
+
+    <div class="table-container">
+        {% if orders %}
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order Name</th>
+                        <th>Order ID</th>
+                        <th>Company</th>
+                        <th>Contact</th>
+                        <!-- <th>Email</th> -->
+                        <th>Job Name</th>
+                        <th>Notes</th>
+                        <th>Job Type</th>
+                        <th>QTY</th>
+                        <th>Ordered</th>
+                        <th>Del. Type</th>
+                        <th>Del. Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr onclick="window.location='{{ url_for('csrform_step1', order_id=order._id) }}'">
+                        <td data-full-text="{{ order.orderInfo.orderName }}">{{ order.orderInfo.orderName }}</td>
+                        <td>{{ order.orderInfo.orderId }}</td>
+                        <td>NA</td>
+                        <td data-full-text="{{ order.customerInfo.contactPerson }}">{{ order.customerInfo.contactPerson }}</td>
+                        <!-- <td data-full-text="{{ order.customerInfo.email }}">{{ order.customerInfo.email }}</td> -->
+                        <td data-full-text="{{ order.jobInfo.name }}">{{ order.jobInfo.name }}</td>
+                        <td data-full-text="{{ order.jobInfo.notes }}">{{ order.jobInfo.notes }}</td>
+                        <td data-full-text="{{ order.jobInfo.productType }}">{{ order.jobInfo.productType }}</td>
+                        <td>{{ order.orderInfo.quantity }}</td>
+                        <td>NA</td>
+                        <td>NA</td>
+                        <td>{{ order.orderInfo.deliveryDate }}</td>
+                        <td>{{ order.status or 'Pending' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                {% if page > 1 %}
+                    <a href="{{ url_for('welcome', page=page-1) }}" class="page-button">Previous</a>
+                {% else %}
+                    <button class="page-button" disabled>Previous</button>
+                {% endif %}
+
+                <span class="page-info">Page {{ page }} of {{ total_pages }}</span>
+
+                {% if page < total_pages %}
+                    <a href="{{ url_for('welcome', page=page+1) }}" class="page-button">Next</a>
+                {% else %}
+                    <button class="page-button" disabled>Next</button>
+                {% endif %}
+            </div>
+
+        {% else %}
+            <p style="text-align: center; color: #718096; padding: 40px;">
+                No orders found. Create your first CSR!
+            </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,607 @@
+{% extends "admin/admin_base.html" %}
+{% block content %}
+<div class="content-area">
+    <div class="dashboard-container">
+        <div class="dashboard-layout">
+            <!-- Left side - Buttons -->
+            <div class="buttons-container">
+                <div class="report-column">
+                    <div class="report-card" onclick="showQuarterlyVolume()">
+                        <h3>Quarterly Print Volume</h3>
+                    </div>
+                    
+                    <div class="report-card" onclick="showWeeklyVolume()">
+                        <h3>Weekly Print Volume</h3>
+                    </div>
+                    
+                    <div class="report-card" onclick="showMonthlyVolume()">
+                        <h3>Monthly Print Volume</h3>
+                    </div>
+                    
+                    <div class="report-card" onclick="showYearlyVolume()">
+                        <h3>Yearly Print Volume</h3>
+                    </div>
+    
+                    <div class="report-card" onclick="showSubstrateConsumption()">
+                        <h3>Substrate Consumption</h3>
+                    </div>
+                    
+                    <div class="report-card" onclick="showPrinters()">
+                        <h3>Printers</h3>
+                    </div>
+                    
+                    <div class="report-card" onclick="showCancelledJobs()">
+                        <h3>Cancelled Jobs</h3>
+                    </div>
+                    
+                    <div class="report-card" onclick="showDigitalVsOffset()">
+                        <h3>Job Volumes for Digital and Offset</h3>
+                    </div>
+
+                    <div class="report-card" onclick="toggleCustomFilters()">
+                        <h3>Custom Reports</h3>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Right side - Chart -->
+            <div class="chart-container">
+                <!-- Add filters container -->
+                <div id="customFilters" class="custom-filters" style="display: none;">
+                    <form id="customReportForm" onsubmit="generateCustomReport(event)">
+                        <div class="filter-group">
+                            <label for="dateStart">Start Date:</label>
+                            <input type="date" id="dateStart" required>
+                        </div>
+                        <div class="filter-group">
+                            <label for="dateEnd">End Date:</label>
+                            <input type="date" id="dateEnd" >
+                        </div>
+                        <div class="filter-group">
+                            <label for="company">Company:</label>
+                            <select id="company" >
+                                <option value="">Select Company</option>
+                                {% for company in companies %}
+                                <option value="{{ company }}">{{ company }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="interval">Interval:</label>
+                            <select id="interval" >
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="submit-btn">Generate Report</button>
+                    </form>
+                </div>
+                <div class="chart-header">
+                    <button id="exportButton" class="export-btn" onclick="exportChart()" style="display: none;">
+                        Export as JPG
+                    </button>
+                </div>
+                <canvas id="reportChart"></canvas>
+                <div id="chartDetails"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+.dashboard-container {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dashboard-layout {
+    display: flex;
+    gap: 30px;
+}
+
+.buttons-container {
+    flex: 0 0 25%;  /* Reduced from 40% to 25% */
+}
+
+.report-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.report-card {
+    background-color: #1a4d6d;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.report-card h3 {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.report-card:hover {
+    transform: translateY(-3px);
+}
+
+.chart-container {
+    flex: 0 0 70%;  /* Increased from 55% to 70% */
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 20px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+
+.export-btn {
+    background-color: #1a4d6d;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.export-btn:hover {
+    background-color: #153d57;
+}
+
+.chart-description {
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    color: #666;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-description i {
+    color: #1a4d6d;
+}
+
+@media (max-width: 1024px) {
+    .dashboard-layout {
+        flex-direction: column;
+    }
+    
+    .buttons-container,
+    .chart-container {
+        flex: 1 1 100%;
+    }
+}
+
+.custom-filters {
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.filter-group {
+    margin-bottom: 15px;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.submit-btn {
+    background-color: #1a4d6d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #153d57;
+}
+</style>
+
+
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<script>
+let currentChart = null;
+
+function clearChart() {
+    if (currentChart) {
+        currentChart.destroy();
+    }
+}
+
+async function showQuarterlyVolume() {
+    // Show the chart and hide the filters first
+    document.getElementById('customFilters').style.display = 'none';
+    document.getElementById('reportChart').style.display = 'block';
+    document.getElementById('exportButton').style.display = 'block'; 
+    
+    const response = await fetch('/quarterly-volume');
+    const data = await response.json();
+    
+    clearChart();
+    currentChart = new Chart(document.getElementById('reportChart'), {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Quarterly Print Volume'
+                }
+            }
+        }
+    });
+    // Add description below the chart
+    const chartDetails = document.getElementById('chartDetails');
+    chartDetails.innerHTML = `
+        <div class="chart-description">
+            <i class="fas fa-info-circle"></i>
+            This graph is based on the past 3 months and the volume refers to completed jobs based on delivery date. If you wish to view other date ranges, please select Custom Reports.
+        </div>
+    `;
+}
+
+async function showWeeklyVolume() {
+    // Show the chart and hide the filters first
+    document.getElementById('customFilters').style.display = 'none';
+    document.getElementById('reportChart').style.display = 'block';
+    document.getElementById('exportButton').style.display = 'block'; 
+    
+    const response = await fetch('/weekly-volume');
+    const data = await response.json();
+    
+    clearChart();
+    currentChart = new Chart(document.getElementById('reportChart'), {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Weekly Print Volume'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Orders'
+                    }
+                }
+            }
+        }
+    });
+    // Add description below the chart
+    const chartDetails = document.getElementById('chartDetails');
+    chartDetails.innerHTML = `
+        <div class="chart-description">
+            <i class="fas fa-info-circle"></i>
+            This graph is based on the past 4 weeks and the volume refers to completed jobs based on delivery date. If you wish to view other date ranges, please select Custom Reports.
+        </div>
+    `;
+}
+
+async function showMonthlyVolume() {
+    // Show the chart and hide the filters first
+    document.getElementById('customFilters').style.display = 'none';
+    document.getElementById('reportChart').style.display = 'block';
+    document.getElementById('exportButton').style.display = 'block'; 
+    
+    const response = await fetch('/monthly-volume');
+    const data = await response.json();
+    
+    clearChart();
+    currentChart = new Chart(document.getElementById('reportChart'), {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Monthly Print Volume (Last 12 Months)'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Orders'
+                    }
+                }
+            }
+        }
+    });
+    chartDetails.innerHTML = `
+        <div class="chart-description">
+            <i class="fas fa-info-circle"></i>
+            This graph is based on the past 12 months and the volume refers to completed jobs based on delivery date. If you wish to view other date ranges, please select Custom Reports.
+        </div>
+    `;
+
+}
+async function showYearlyVolume() {
+    // Show the chart and hide the filters first
+    document.getElementById('customFilters').style.display = 'none';
+    document.getElementById('reportChart').style.display = 'block';
+    document.getElementById('exportButton').style.display = 'block'; 
+    
+    const response = await fetch('/yearly-volume');
+    const data = await response.json();
+    
+    clearChart();
+    currentChart = new Chart(document.getElementById('reportChart'), {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Yearly Print Volume (Last 5 Years)'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Orders'
+                    }
+                }
+            }
+        }
+    });
+    chartDetails.innerHTML = `
+        <div class="chart-description">
+            <i class="fas fa-info-circle"></i>
+            This graph is based on the past 5 years and the volume refers to completed jobs based on delivery date. If you wish to view other date ranges, please select Custom Reports.
+        </div>
+    `;
+}
+async function showSubstrateConsumption() {
+    // Show the chart and hide the filters first
+    document.getElementById('customFilters').style.display = 'none';
+    document.getElementById('reportChart').style.display = 'block';
+    document.getElementById('exportButton').style.display = 'block'; 
+    
+    const response = await fetch('/substrate-consumption');
+    const data = await response.json();
+    
+    clearChart();
+    currentChart = new Chart(document.getElementById('reportChart'), {
+        type: 'pie',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Substrate Consumption'
+                }
+            }
+        }
+    });
+    chartDetails.innerHTML = `
+        <div class="chart-description">
+            <i class="fas fa-info-circle"></i>
+            This graph is based on the substrate jobs for all jobs ordered in the past. If you wish to view a particular date range, please select Custom Reports.
+        </div>
+    `;
+}
+
+async function showCancelledJobs() {
+    // Show the chart and hide the filters first
+    document.getElementById('customFilters').style.display = 'none';
+    document.getElementById('reportChart').style.display = 'block';
+    document.getElementById('exportButton').style.display = 'block'; 
+    
+    const response = await fetch('/cancelled-jobs');
+    const data = await response.json();
+    
+    clearChart();
+    currentChart = new Chart(document.getElementById('reportChart'), {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Completed vs Cancelled Orders (Last 4 Weeks)'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Orders'
+                    }
+                }
+            }
+        }
+    });
+    chartDetails.innerHTML = `
+        <div class="chart-description">
+            <i class="fas fa-info-circle"></i>
+            This graph is based on the number of completed and cancelled jobs for all jobs ordered in the past 4 weeks. If you wish to view a particular date range, please select Custom Reports.
+        </div>
+    `;
+}
+
+function toggleCustomFilters() {
+    const filtersDiv = document.getElementById('customFilters');
+    const chartCanvas = document.getElementById('reportChart');
+    const exportButton = document.getElementById('exportButton');
+    if (filtersDiv.style.display === 'none') {
+        filtersDiv.style.display = 'block';
+        chartCanvas.style.display = 'none';
+        exportButton.style.display = 'none'; 
+    } else {
+        filtersDiv.style.display = 'none';
+        chartCanvas.style.display = 'block';
+        exportButton.style.display = 'block';
+    }
+}
+
+async function generateCustomReport(event) {
+    event.preventDefault();
+    
+    const dateStart = document.getElementById('dateStart').value;
+    const dateEnd = document.getElementById('dateEnd').value;
+    const company = document.getElementById('company').value;
+    const interval = document.getElementById('interval').value;
+    
+    const response = await fetch('/custom-report', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            dateStart,
+            dateEnd,
+            company,
+            interval
+        })
+    });
+    
+    const data = await response.json();
+    
+    clearChart();
+    document.getElementById('reportChart').style.display = 'block';
+    currentChart = new Chart(document.getElementById('reportChart'), {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Custom Report'
+                }
+            }
+        }
+    });
+}
+
+async function showDigitalVsOffset() {
+    // Show the chart and hide the filters first
+    document.getElementById('customFilters').style.display = 'none';
+    document.getElementById('reportChart').style.display = 'block';
+    document.getElementById('exportButton').style.display = 'block';
+    
+    const response = await fetch('/digital-vs-offset');
+    const data = await response.json();
+    
+    clearChart();
+    currentChart = new Chart(document.getElementById('reportChart'), {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Digital vs Offset Print Volume'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Orders'
+                    }
+                }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+
+    // Add description below the chart
+    const chartDetails = document.getElementById('chartDetails');
+    chartDetails.innerHTML = `
+        <div class="chart-description">
+            <i class="fas fa-info-circle"></i>
+            This graph shows the comparison between Digital and Offset print volumes for the past 4 weeks. If you wish to view other date ranges, please select Custom Reports.
+        </div>
+    `;
+}
+
+// Add this function for exporting
+function exportChart() {
+    const canvas = document.getElementById('reportChart');
+    
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.download = 'chart.jpg';
+    
+    // Convert the canvas to a data URL
+    link.href = canvas.toDataURL('image/jpeg', 1.0);
+    
+    // Trigger the download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+</script>
+
+
+
+{% endblock %} 

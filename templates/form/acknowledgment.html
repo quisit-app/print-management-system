@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .form-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 40px 60px;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .acknowledgment-section {
+        text-align: center;
+        padding: 40px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .acknowledgment-section:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .acknowledgment-section h2 {
+        color: #1a365d;
+        margin-bottom: 20px;
+        font-size: 28px;
+        font-weight: 600;
+    }
+
+    .acknowledgment-section p {
+        color: #4a5568;
+        margin-bottom: 30px;
+        font-size: 16px;
+    }
+
+    .order-id {
+        display: inline-block;
+        background: #ebf8ff;
+        color: #4299e1;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        margin: 10px 0;
+    }
+
+    .action-buttons {
+        margin-top: 30px;
+    }
+
+    .new-form-btn {
+        display: inline-block;
+        padding: 14px 48px;
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+        background-color: #4299e1;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(66, 153, 225, 0.12);
+    }
+
+    .new-form-btn:hover {
+        background-color: #3182ce;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 8px rgba(66, 153, 225, 0.2);
+    }
+
+    .new-form-btn:active {
+        transform: translateY(0);
+    }
+
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+        
+        .form-container {
+            padding: 20px;
+            margin: 20px auto;
+        }
+    }
+</style>
+
+<div class="form-container">
+    <div class="acknowledgment-section">
+        <h2>Order Submitted Successfully!</h2>
+        <p>Your order has been received and is being processed.</p>
+        <div class="order-id">Order ID: {{ order_id }}</div>
+        <div class="action-buttons">
+            <a href="{{ url_for('welcome') }}" class="new-form-btn">Return to Home</a>
+            <a href="{{ url_for('csrform_step1') }}" class="new-form-btn">Submit a new CSRF form</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

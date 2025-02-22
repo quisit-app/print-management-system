@@ -1,0 +1,763 @@
+<style>
+    body {
+        background-color: #f5f7fa;
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 20px;
+    }
+
+    .form-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 40px 60px;
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Add responsive padding for mobile */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+        
+        .form-container {
+            padding: 20px;
+            margin: 20px auto;
+        }
+    }
+    
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+    .header h1 {
+        color: #1a365d;
+        font-size: 32px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .form-section {
+        background: #f8fafc;
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 30px;
+        transition: box-shadow 0.3s ease;
+    }
+
+    .form-section:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-section h3 {
+        color: #2d3748;
+        margin-top: 0;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #e2e8f0;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .form-section h4 {
+        color: #4a5568;
+        margin-bottom: 15px;
+        font-weight: 500;
+    }
+
+    .main-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    .left-column, .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 8px;
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    input[type="text"], .form-select {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background-color: white;
+    }
+
+    input[type="text"]:focus, .form-select:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    }
+
+    .radio-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        font-size: 14px;
+        color: #4a5568;
+        transition: color 0.2s ease;
+    }
+
+    .radio-label:hover {
+        color: #2b6cb0;
+    }
+
+    .radio-label input[type="radio"], 
+    .radio-label input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        cursor: pointer;
+        accent-color: #4299e1;
+    }
+
+    .options-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-top: 10px;
+    }
+
+    .services-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    input[type="file"] {
+        width: 100%;
+        padding: 20px;
+        border: 2px dashed #cbd5e0;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+    }
+
+    input[type="file"]:hover {
+        border-color: #4299e1;
+    }
+
+    .submit-button {
+        text-align: center;
+        margin: 30px 0;
+    }
+
+    button {
+        padding: 14px 48px;
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+        background-color: #4299e1;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 6px rgba(66, 153, 225, 0.12);
+    }
+
+    button:hover {
+        background-color: #3182ce;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 8px rgba(66, 153, 225, 0.2);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    #controlNumber {
+        font-weight: 600;
+        color: #4299e1;
+        background: #ebf8ff;
+        padding: 8px 16px;
+        border-radius: 6px;
+    }
+
+    /* Form section hover effects */
+    .form-section:focus-within {
+        border-color: #4299e1;
+        box-shadow: 0 4px 12px rgba(66, 153, 225, 0.1);
+    }
+
+    /* Placeholder styling */
+    input::placeholder {
+        color: #a0aec0;
+    }
+
+    /* Helper text styling */
+    .helper-text {
+        font-size: 12px;
+        color: #718096;
+        margin-top: -10px;
+        margin-bottom: 15px;
+    }
+
+    /* File upload area styling */
+    .file-upload-area {
+        position: relative;
+    }
+
+    .file-upload-area p {
+        font-size: 13px;
+        color: #718096;
+        margin-top: 8px;
+    }
+
+    /* Style for number input */
+    input[type="number"] {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background-color: white;
+    }
+
+    /* Remove spinner buttons */
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+    
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+
+    input[type="number"]:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    }
+
+    /* Date picker styling */
+    input[type="date"] {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background-color: white;
+        color: #4a5568;
+        cursor: pointer;
+    }
+
+    input[type="date"]:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    }
+
+    /* Placeholder color */
+    input[type="date"]::-webkit-datetime-edit-text,
+    input[type="date"]::-webkit-datetime-edit-month-field,
+    input[type="date"]::-webkit-datetime-edit-day-field,
+    input[type="date"]::-webkit-datetime-edit-year-field {
+        color: #4a5568;
+    }
+
+    input[type="date"]::-webkit-datetime-edit-text {
+        padding: 0 2px;
+    }
+
+    .logo-image {
+        max-width: 200px;
+        height: auto;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        background-color: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #4299e1;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
+    }
+
+    select.form-control {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a5568' viewBox='0 0 16 16'%3E%3Cpath d='M8 10.5l-4-4h8l-4 4z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        padding-right: 40px;
+    }
+
+    select.form-control::-ms-expand {
+        display: none;
+    }
+
+    select.form-control:hover {
+        border-color: #4299e1;
+    }
+</style>
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="form-container">
+    <div class="header">
+        <h1>CSR Form</h1>
+        <img src="{{ url_for('static', filename='images/Konica_Minolta_logo.png') }}" alt="Konica Minolta Logo" style="height: 40px;">
+    </div>
+
+    <form method="POST" action="{{ url_for('csrform') }}" enctype="multipart/form-data">
+        <div class="main-container">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Customer Information -->
+                <div class="form-section">
+                    <h3>Customer Information</h3>
+                    <div>
+                        <label for="contactPerson">Contact Person:</label>
+                        <input type="text" id="contactPerson" name="contactPerson" 
+                               value="{{  past_order.customerInfo.contactPerson if past_order else username if username else ''}}" required>
+                        
+                        <label for="address">Address</label>
+                        <input type="text" name="address" 
+                                value="{{ past_order.customerInfo.address if past_order else '' }}">
+                        
+                        <label for="email">Email</label>
+                        <input type="text" name="email" 
+                                value="{{ past_order.customerInfo.email if past_order else email if email else '' }}">
+                        
+                        <label for="telNo">Tel number</label>
+                        <input type="text" name="telNo" 
+                                value="{{ past_order.customerInfo.telNo if past_order else '' }}">
+                    </div>
+                </div>
+
+                <!-- Job Information -->
+                <div class="form-section">
+                    <h3>Job Information</h3>
+                    <div>
+                        <label for="name">Name</label>
+                        <input type="text" name="name" 
+                                value="{{ past_order.billingInfo.contactPerson if past_order else '' }}">
+                        
+                        <label for="id">ID</label>
+                        <input type="text" name="id"
+                                value="{{ request.form['id'] }}">
+                        
+                        <label for="productType">Product Type</label>
+                        <select name="productType" id="productType" class="form-select">
+                            <option value="">Select a product type...</option>
+                            <option value="Booklet">Booklet</option>
+                            <option value="Business Card">Business Card</option>
+                            <option value="Letterhead">Letterhead</option>
+                            <option value="Magazine">Magazine</option>
+                        </select>
+                        
+                        <label for="numberOfPages">Number of Pages</label>
+                        <input type="number" name="numberOfPages" id="numberOfPages" min="1" 
+                               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                               value="{{ request.form['numberOfPages'] }}" class="form-input">
+                        
+                        <label for="notes">Notes</label>
+                        <input type="text" name="notes" value="{{ request.form['notes'] }}">
+                    </div>
+                </div>
+
+                <!-- Output Information -->
+                <div class="form-section">
+                    <h3>Output Information</h3>
+                    <div>
+                        <div class="form-column">
+                            <label class="radio-label"><input type="radio" name="output" value="digital"> Digital</label>
+                            <label class="radio-label"><input type="radio" name="output" value="offset"> Offset</label>
+                        </div>
+                        
+                        <div class="form-column" style="margin-top: 15px;">
+                            <h4>Options:</h4>
+                            <div class="options-grid">
+                                <label class="radio-label"><input type="radio" name="options" value="toner"> Toner</label>
+                                <label class="radio-label"><input type="radio" name="options" value="4cPress"> 4c Press</label>
+                                <label class="radio-label"><input type="radio" name="options" value="inkjet"> Inkjet</label>
+                                <label class="radio-label"><input type="radio" name="options" value="5cPress"> 5c Press</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Information -->
+                <div class="form-section">
+                    <h3>Delivery Information</h3>
+                    <div>
+                        <label for="deliveryContactPerson">Contact Person</label>
+                        <input type="text" name="deliveryContactPerson" value="{{ request.form['deliveryContactPerson'] }}">
+                        
+                        <label for="deliveryAddress">Address</label>
+                        <input type="text" name="deliveryAddress" value="{{ request.form['deliveryAddress'] }}">
+                        
+                        <label for="deliveryEmail">Email</label>
+                        <input type="text" name="deliveryEmail" value="{{ request.form['deliveryEmail'] }}">
+                        
+                        <label for="deliveryTelNo">Tel number</label>
+                        <input type="text" name="deliveryTelNo" value="{{ request.form['deliveryTelNo'] }}">
+                    </div>
+                </div>
+
+                <!-- Job Source Files -->
+                <div class="form-section">
+                    <h3>Job Source files</h3>
+                    <input type="file" name="files" multiple accept=".pdf,.ps,.eps">
+                    <p>Link to Customer supplied Digital File (PDF, PS, EPS) - Must have the capacity to link multiple files</p>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Billing Information -->
+                <div class="form-section">
+                    <h3>Billing Information</h3>
+                    <div>
+                        <label for="billingContactPerson">Contact Person</label>
+                        <input type="text" name="billingContactPerson" value="{{ request.form['billingContactPerson'] }}">
+                        
+                        <label for="billingAddress">Address</label>
+                        <input type="text" name="billingAddress" 
+                                value="{{ past_order.billingInfo.address if past_order else '' }}">
+                        
+                        <label for="billingEmail">Email</label>
+                        <input type="text" name="billingEmail" 
+                                value="{{ past_order.billingInfo.email if past_order else '' }}">
+                        
+                        <label for="billingTelNo">Tel number</label>
+                        <input type="text" name="billingTelNo" 
+                                value="{{ past_order.billingInfo.telNo if past_order else '' }}">
+                    </div>
+                </div>
+
+                <!-- Order Information -->
+                <div class="form-section">
+                    <h3>Order Information</h3>
+                    <div>
+                        <label for="productName">Product Name</label>
+                        <select class="form-control" name="productName" id="productName" required>
+                            <option value="">Select a product...</option>
+                            {% if past_order %}
+                                <option value="{{ product }}" {% if past_order.orderInfo.productName== product %}selected{% endif %}>{{ product }}</option>
+                            {% else %}
+                            <option value="2-up on SRA3">2-up on SRA3</option>
+                            <option value="4 slides on A4">4 slides on A4</option>
+                            <option value="A3, Black and White">A3, Black and White</option>
+                            <option value="A3, Color">A3, Color</option>
+                            <option value="A4, Black and white">A4, Black and white</option>
+                            <option value="A4, Color">A4, Color</option>
+                            <option value="Banner">Banner</option>
+                            <option value="BC 85x55 mm with sheet info and micro qr code">BC 85x55 mm with sheet info and micro qr code</option>
+                            <option value="Book, A5, Perfect binding, Cross fold (with bleed)">Book, A5, Perfect binding, Cross fold (with bleed)</option>
+                            <option value="Booklet, A4">Booklet, A4</option>
+                            <option value="Booklet with cover, A4">Booklet with cover, A4</option>
+                            <option value="Business cards, 85x55 mm">Business cards, 85x55 mm</option>
+                            <option value="Default">Default</option>
+                            <option value="Postcards, A6">Postcards, A6</option>
+                            {% endif %}
+                        </select>
+                        
+                        <label for="deliveryDate">Delivery Date</label>
+                        <input type="date" name="deliveryDate" id="deliveryDate"
+                               value="{{ request.form['deliveryDate'] }}" class="form-input">
+                        
+                        <label for="quantity">Quantity</label>
+                        <input type="text" name="quantity" value="{{ request.form['quantity'] }}">
+                    </div>
+                </div>
+
+                <!-- Service Settings -->
+                <div class="form-section">
+                    <h3>Service Settings</h3>
+                    <h5>PRINTING SERVICES</h5>
+                    <!-- COLORPRINT -->
+                    <div class="form-group">
+                        <label>COLORPRINT:</label>
+                        <div class="service-options">
+                            <div>
+                                <label>Option ID:</label>
+                                <select class="form-control" name="colorprint_optionid">
+                                    <!-- <option value="">Select Option</option> -->
+                                    <option value="ON" selected>ON</option>
+                                    <option value="OFF">OFF</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Option Name:</label>
+                                <input type="text" class="form-control" name="colorprint_optionname">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DUPLEX -->
+                    <div class="form-group">
+                        <label>DUPLEX:</label>
+                        <div class="service-options">
+                            <div>
+                                <label>Option ID:</label>
+                                <select class="form-control" name="duplex_optionid">
+                                    <!-- <option value="">Select Option</option> -->
+                                    <option value="ON" selected>ON</option>
+                                    <option value="ONTUMBLE">ONTUMBLE</option>
+                                    <option value="OFF">OFF</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Option Name:</label>
+                                <input type="text" class="form-control" name="duplex_optionname">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BINDINGPOSITION -->
+                    <div class="form-group">
+                        <label>BINDINGPOSITION:</label>
+                        <div class="service-options">
+                            <div>
+                                <label>Option ID:</label>
+                                <select class="form-control" name="bindingposition_optionid">
+                                    <!-- <optio n value="">Select Option</option> -->
+                                    <option value="LEFT" selected>LEFT</option>
+                                    <option value="TOP">TOP</option>
+                                    <option value="RIGHT">RIGHT</option>
+                                    <option value="BOTTOM">BOTTOM</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Option Name:</label>
+                                <input type="text" class="form-control" name="bindingposition_optionname">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAGEFITTING -->
+                    <div class="form-group">
+                        <label>PAGEFITTING:</label>
+                        <div class="service-options">
+                            <div>
+                                <label>Option ID:</label>
+                                <select class="form-control" name="pagefitting_optionid">
+                                    <!-- <option value="">Select Option</option> -->
+                                    <option value="LEFT" selected>LEFT</option>
+                                    <option value="TOP">TOP</option>
+                                    <option value="RIGHT">RIGHT</option>
+                                    <option value="BOTTOM">BOTTOM</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Option Name:</label>
+                                <input type="text" class="form-control" name="pagefitting_optionname">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAPERTYPE -->
+                    <div class="form-group">
+                        <label>PAPERTYPE:</label>
+                        <div class="service-options">
+                            <div>
+                                <label>Option ID:</label>
+                                <select class="form-control" name="papertype_optionid">
+                                    <option value="Printer default" selected>Printer default</option>
+                                    <option value="White, 80g/m2">White, 80g/m2</option>
+                                    <option value="White, 200g/m2, Colorcopy" > White, 200g/m2, Colorcopy</option>
+                                </select>
+                            </div>
+                            <!-- <div>
+                                <label>Option ID:</label>
+                                <select class="form-control" name="papertype_optionid">
+                                    <option value="">Select Option</option>
+                                    <option value="Printer default" selected>Printer default</option>
+                                    <option value="White, 80g/m2">White, 80g/m2</option>
+                                    <option value="White, 200g/m2, Colorcopy" > White, 200g/m2, Colorcopy</option>
+                                </select>
+                            </div> -->
+                            <div>
+                                <label>Option Name:</label>
+                                <input type="text" class="form-control" name="papertype_optionname">
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <h5>FINISHING SERVICES</h5>
+                    <!-- PUNCH -->
+                    <div class="form-group">
+                        <label>PUNCH:</label>
+                        <div class="service-options">
+                            <div>
+                                <label>Option ID:</label>
+                                <select class="form-control" name="punch_optionid">
+                                    <option value="">Select Option</option>
+                                    <option value="OFF">OFF</option>
+                                    <option value="TRUE">TRUE</option>
+                                    <option value="2HOLES" selected> 2HOLES</option>
+                                    <option value="3HOLES">3HOLES</option>
+                                    <option value="4HOLES">4HOLES</option>
+                                    <option value="2HOLESWIDE">2HOLESWIDE</option>
+                                    <option value="3HOLESWIDE">3HOLESWIDE</option>
+                                    <option value="4HOLESWIDE">4HOLESWIDE</option>
+                                    <option value="4HOLESGROUPED">4HOLESGROUPED</option>
+                                    <option value="MULTIHOLE">MULTIHOLE</option>
+                                    <option value="RINGBOUND">RINGBOUND</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Option Name:</label>
+                                <input type="text" class="form-control" name="punch_optionname">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Staple-->
+                    <div class="form-group"></div>
+                        <label>Staple:</label>
+                        <div class="service-options">
+                            <div>
+                                <label>Option ID:</label>
+                                <select class="form-control" name="staple_optionid">
+                                    <option value="OFF">OFF</option>
+                                    <option value="TRUE">TRUE</option>
+                                    <option value="1STAPLE selected" selected>1STAPLE</option>
+                                    <option value="1STAPLE(V)">1STAPLE(V)</option>
+                                    <option value="1STAPLE(H)">1STAPLE(H)</option>
+                                    <option value="1STAPLE(S)">1STAPLE(S)</option>
+                                    <option value="1STAPLEII">1STAPLEII</option>
+                                    <option value="1STAPLEII(V)">1STAPLEII(V)</option>
+                                    <option value="1STAPLEII(H)">1STAPLEII(H)</option>
+                                    <option value="1STAPLEII(S)">1STAPLEII(S)</option>
+                                    <option value="2STAPLES">2STAPLES</option>
+                                    <option value="2STAPLEWIDE">2STAPLEWIDE</option>
+                                    <option value="2STAPLEXWIDE">2STAPLEXWIDE</option>
+                                    <option value="4STAPLES">4STAPLES</option>
+                                    <option value="4STAPLES(CENTER)">4STAPLES(CENTER)</option>
+                                    <option value="1STAPLE(LOWER)">1STAPLE(LOWER)</option>
+                                    <option value="1STAPLE(LOWERV)">1STAPLE(LOWERV)</option>
+                                    <option value="1STAPLEW(LOWERH)">1STAPLEW(LOWERH)</option>
+                                    <option value="1STAPLE(LOWERS)">1STAPLE(LOWERS)</option>
+                                    <option value="1CENTER">1CENTER</option>
+                                    <option value="CENTER">CENTER</option>
+                                    <option value="CENTER(FOLD)">CENTER(FOLD)</option>
+                                    <option value="CENTER(FOLDTRIM)">CENTER(FOLDTRIM)</option>
+                                    <option value="CENTER(FOLDTRIM3SIDES)">CENTER(FOLDTRIM3SIDES)</option>
+                                    <option value="CENTER(SQUAREFOLD)">CENTER(SQUAREFOLD)</option>
+                                    <option value="CENTER(SQUAREFOLDTRIM)">CENTER(SQUAREFOLDTRIM)</option>
+                                    <option value="CENTER(SQUAREFOLDTRIM3SIDES)">CENTER(SQUAREFOLDTRIM3SIDES)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Option Name:</label>
+                                <input type="text" class="form-control" name="staple_optionname">
+                            </div>
+                        </div>
+
+                        <!--Fold-->
+                        <div class="form-group"></div>
+                            <label>Fold:</label>
+                            <div class="service-options">
+                                <div>
+                                    <label>Option ID:</label>
+                                    <select class="form-control" name="fold_optionid">
+                                        <option value="OFF">OFF</option>
+                                        <option value="ZFOLD">ZFOLD</option>
+                                        <option value="MULTIHALFFOLD">MULTIHALFFOLD</option>
+                                        <option value="MULTIHALFFOLDTRIM">MULTIHALFFOLDTRIM</option>
+                                        <option value="MULTIHALFFOLDIN">MULTIHALFFOLDIN</option>
+                                        <option value="MULTIHALFFOLDINTRIM">MULTIHALFFOLDINTRIM</option>
+                                        <option value="MULTIHALFFOLDOUT">MULTIHALFFOLDOUT</option>
+                                        <option value="MULTIHALFFOLDOUTTRIM">MULTIHALFFOLDOUTTRIM</option>
+                                        <option value="MULTILETTERFOLDIN">MULTILETTERFOLDIN</option>
+                                        <option value="MULTILETTERFOLDOUT">MULTILETTERFOLDOUT</option>
+                                        <option value="HALFFOLD" selected>HALFFOLD</option>
+                                        <option value="HALFFOLDIN">HALFFOLDIN</option>
+                                        <option value="HALFFOLDOUT">HALFFOLDOUT</option>
+                                        <option value="LETTERFOLD">LETTERFOLD</option>
+                                        <option value="LETTERFOLDIN">LETTERFOLDIN</option>
+                                        <option value="LETTERFOLDOUT">LETTERFOLDOUT</option>
+                                        <option value="ZIGZAGIN">ZIGZAGIN</option>
+                                        <option value="ZIGZAGOUT">ZIGZAGOUT</option>
+                                        <option value="DOUBLEPARALLELIN">DOUBLEPARALLELIN</option>
+                                        <option value="DOUBLEPARALLELOUT">DOUBLEPARALLELOUT</option>
+                                        <option value="GATEFOLDIN">GATEFOLDIN</option>
+                                        <option value="GATEFOLDOUT">GATEFOLDOUT</option>
+                                    </select>
+                                    
+                                </div>
+                                <div>
+                                    <label>Option Name:</label>
+                                    <input type="text" class="form-control" name="punch_optionname">
+                                </div>
+                            </div>
+
+
+
+
+                    </div>
+
+                    
+                </div>
+            </div>
+
+            <!-- Full Width Bottom Section -->
+            <div class="full-width">
+                <!-- Submit Button -->
+                <div class="submit-button">
+                    <button type="submit">Submit Order</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- If you have any navigation links -->
+<div class="navigation">
+    <a href="{{ url_for('welcome') }}">Back to Welcome</a>
+    <a href="{{ url_for('logout') }}">Logout</a>
+</div>
+{% endblock %}
