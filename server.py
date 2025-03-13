@@ -194,37 +194,165 @@ def guest_login():
     session['guest'] = True
     return redirect(url_for('csrform'))
 
-@app.route('/welcome')
-def welcome():
+# @app.route('/welcome')
+# def welcome():
     
+#     if 'username' not in session:
+#         return redirect(url_for('login'))
+
+
+#     # Pagination parameters
+#     page = request.args.get('page', 1, type=int)
+#     per_page = ITEMS_PER_PAGE
+#     skip = (page - 1) * per_page
+    
+#     # Get username
+#     username = session.get('username')
+
+#     # Get date range from query parameters
+#     start_date = request.args.get('start_date')
+#     end_date = request.args.get('end_date')
+#     selected_company = request.args.get('company')
+#     select_status = request.args.get('status')
+#     select_jobType = request.args.get('jobType')
+#     search_query = request.args.get('search')
+#     # print(search_query)
+
+
+#       # Base query for admin to see all records, others see only their own
+#     if username == 'admin':
+#         query = {}
+#     else:
+#         query = {"customerInfo.contactPerson": username}
+    
+    
+#     # Add date filter if dates are provided
+#     if start_date and end_date:
+#         try:
+#             start = datetime.strptime(start_date, '%Y-%m-%d')
+#             end = datetime.strptime(end_date, '%Y-%m-%d')
+#             query['orderInfo.deliveryDate'] = {
+#                 '$gte': start.strftime('%Y-%m-%d'),
+#                 '$lte': end.strftime('%Y-%m-%d')
+#             }
+#         except ValueError:
+#             flash('Invalid date format')
+#     elif start_date:
+#         try:
+#             start = datetime.strptime(start_date, '%Y-%m-%d')
+#             query['orderInfo.deliveryDate'] = {
+#                 '$gte': start.strftime('%Y-%m-%d'),
+#             }
+#         except ValueError:
+#             flash('Invalid date format')
+#     elif end_date:
+#         try:
+#             end = datetime.strptime(end_date, '%Y-%m-%d')
+#             query['orderInfo.deliveryDate'] = {
+#                 '$lte': end.strftime('%Y-%m-%d')
+#             }
+#         except ValueError:
+#             flash('Invalid date format')
+    
+#     if search_query:
+#         # Search in multiple fields using case-insensitive regex
+#         query['$or'] = [
+#             {'orderInfo.orderId': {'$regex': search_query, '$options': 'i'}},
+#             {'customerInfo.contactPerson': {'$regex': search_query, '$options': 'i'}},
+#             {'company': {'$regex': search_query, '$options': 'i'}},
+#             {'jobInfo.notes': {'$regex': search_query, '$options': 'i'}},
+#             {'order.orderInfo.deliveryType': {'$regex': search_query, '$options': 'i'}},
+#             {'order.orderInfo.orderDate': {'$regex': search_query, '$options': 'i'}},
+#             {'order.orderInfo.deliveryDate': {'$regex': search_query, '$options': 'i'}},
+#             {'status': {'$regex': search_query, '$options': 'i'}},
+            
+#         ]
+                  
+    
+#      # If company is selected, get all users from that company
+#     if selected_company:
+#         users_with_company = list(db.users.find(
+#             {'company': selected_company}, 
+#             {'_id': 1, 'username': 1}
+#         ))
+#         user_ids = [str(user['username']) for user in users_with_company]
+#         query['customerInfo.contactPerson'] = {'$in': user_ids}
+
+#     if select_status:
+#         query['status'] = select_status  
+#     # Get paginated orders
+#     page = request.args.get('page', 1, type=int)
+#     per_page = ITEMS_PER_PAGE
+#     skip = (page - 1) * per_page
+    
+#     total_orders = db.form.count_documents(query)
+#     total_pages = ceil(total_orders / per_page)
+    
+#     orders = list(db.form.find(query)
+#                  .sort('_id', -1)
+#                  .skip(skip)
+#                  .limit(per_page))
+    
+#     # Get companies for the filter dropdown
+#     companies = db.users.distinct('company')
+#     company_list = []
+#     for company in companies:
+#         if company:  # Skip empty values
+#             company_list.append({
+#                 'id': company,
+#                 'name': company
+#             })
+#     company_list.sort(key=lambda x: x['name'])
+
+#     for order in orders:
+#         user = db.users.find_one(
+#             {'username': order['customerInfo']['contactPerson']},
+#             {'username': 1, 'company': 1, '_id': 0}
+#         )
+#         # print(user)
+
+#         if user and 'company' in user:
+#             order['company'] = user['company']
+#         else:
+#             order['company'] = 'N/A'
+#             print(f"No company found for user: {order['customerInfo']['contactPerson']}")
+    
+  
+
+#     template = 'admin/admin.html' if username == 'admin' else 'user/welcome.html'
+#     return render_template(template, 
+#                          username=username,
+#                          orders=orders,
+#                          page=page,
+#                          total_pages=total_pages,
+#                          start_date=start_date,
+#                          end_date=end_date,
+#                          selected_company = selected_company,
+#                          companies=company_list,
+#                          selected_status=select_status,
+#                          search_query = search_query)
+
+@app.route('/welcome',methods=["GET","POST"])
+def welcome():
     if 'username' not in session:
         return redirect(url_for('login'))
-
-
-    # Pagination parameters
-    page = request.args.get('page', 1, type=int)
-    per_page = ITEMS_PER_PAGE
-    skip = (page - 1) * per_page
     
     # Get username
     username = session.get('username')
 
-    # Get date range from query parameters
+    # Get filter parameters
     start_date = request.args.get('start_date')
     end_date = request.args.get('end_date')
     selected_company = request.args.get('company')
     select_status = request.args.get('status')
     select_jobType = request.args.get('jobType')
     search_query = request.args.get('search')
-    # print(search_query)
 
-
-      # Base query for admin to see all records, others see only their own
+    # Base query for admin to see all records, others see only their own
     if username == 'admin':
         query = {}
     else:
         query = {"customerInfo.contactPerson": username}
-    
     
     # Add date filter if dates are provided
     if start_date and end_date:
@@ -265,11 +393,9 @@ def welcome():
             {'order.orderInfo.orderDate': {'$regex': search_query, '$options': 'i'}},
             {'order.orderInfo.deliveryDate': {'$regex': search_query, '$options': 'i'}},
             {'status': {'$regex': search_query, '$options': 'i'}},
-            
         ]
                   
-    
-     # If company is selected, get all users from that company
+    # If company is selected, get all users from that company
     if selected_company:
         users_with_company = list(db.users.find(
             {'company': selected_company}, 
@@ -280,18 +406,9 @@ def welcome():
 
     if select_status:
         query['status'] = select_status  
-    # Get paginated orders
-    page = request.args.get('page', 1, type=int)
-    per_page = ITEMS_PER_PAGE
-    skip = (page - 1) * per_page
-    
-    total_orders = db.form.count_documents(query)
-    total_pages = ceil(total_orders / per_page)
-    
-    orders = list(db.form.find(query)
-                 .sort('_id', -1)
-                 .skip(skip)
-                 .limit(per_page))
+
+    # Get ALL orders instead of paginated results
+    orders = list(db.form.find(query).sort('_id', -1))
     
     # Get companies for the filter dropdown
     companies = db.users.distinct('company')
@@ -304,33 +421,44 @@ def welcome():
             })
     company_list.sort(key=lambda x: x['name'])
 
+    # Add company information to orders
     for order in orders:
         user = db.users.find_one(
             {'username': order['customerInfo']['contactPerson']},
             {'username': 1, 'company': 1, '_id': 0}
         )
-        # print(user)
 
         if user and 'company' in user:
             order['company'] = user['company']
         else:
             order['company'] = 'N/A'
             print(f"No company found for user: {order['customerInfo']['contactPerson']}")
-    
-  
 
     template = 'admin/admin.html' if username == 'admin' else 'user/welcome.html'
+    if request.method == 'POST':
+        new_status = request.form.get('status')
+        order_id = request.form.get('order_id')  # Get order_id from the form
+        
+        if new_status and order_id:  # Make sure both values exist
+            try:
+                db.form.update_one(
+                    {"_id": ObjectId(order_id)},
+                    {"$set": {"status": new_status}}
+                )
+                flash('Status updated successfully')
+                return redirect(url_for('welcome'))
+            except Exception as e:
+                flash(f'Error updating status: {str(e)}')
+                return redirect(url_for('welcome'))
     return render_template(template, 
                          username=username,
                          orders=orders,
-                         page=page,
-                         total_pages=total_pages,
                          start_date=start_date,
                          end_date=end_date,
-                         selected_company = selected_company,
+                         selected_company=selected_company,
                          companies=company_list,
                          selected_status=select_status,
-                         search_query = search_query)
+                         search_query=search_query)
 
 @app.route('/logout')
 def logout():
@@ -2403,6 +2531,84 @@ def schedule():
     print("Delivery Counts:", delivery_counts)  # Debug print
     
     return render_template('schedule.html', delivery_counts=delivery_counts)
+
+@app.route('/admin/orders/<order_id>')
+def admin_combined(order_id=None):
+
+
+    try:
+        # Get all orders
+        all_orders = list(db.form.find().sort("_id", -1))
+        
+        # If no order_id, use the latest order
+        if not order_id and all_orders:
+            order_id = str(all_orders[0]['_id'])
+        
+        # Get current order
+        current_order = db.form.find_one({"_id": ObjectId(order_id)})
+        
+        if not current_order:
+            flash('Order not found')
+            return redirect(url_for('welcome'))
+        
+        return render_template('combinedwelcome.html',
+                             orders=all_orders,
+                             current_order=current_order)
+                             
+    except Exception as e:
+        flash('Error loading orders')
+        print(e)
+        return redirect(url_for('welcome'))
+
+@app.route('/api/order-details/<order_id>')
+def get_order_details1(order_id):
+    if 'username' not in session:
+        return 'Unauthorized', 401
+    
+    try:
+        order = db.form.find_one({"_id": ObjectId(order_id)})
+        if not order:
+            return 'Order not found', 404
+            
+        return render_template('view_order.html', order=order)
+        
+    except Exception as e:
+        return 'Error loading order details', 500
+
+@app.route('/get-order-details/<order_id>')
+def get_order_details(order_id):
+    if 'username' not in session:
+        return 'Unauthorized', 401
+    
+    try:
+        order = db.form.find_one({"_id": ObjectId(order_id)})
+        if not order:
+            return 'Order not found', 404
+            
+        return render_template('order_details_partial.html', order=order)
+        
+    except Exception as e:
+        print(e)
+        return 'Error loading order', 500
+
+@app.route('/update-order-status/<order_id>', methods=['POST'])
+def update_order_status(order_id):
+    if 'username' not in session:
+        return 'Unauthorized', 401
+    
+    try:
+        new_status = request.form.get('status')
+        if new_status:
+            db.form.update_one(
+                {"_id": ObjectId(order_id)},
+                {"$set": {"status": new_status}}
+            )
+            return 'Status updated successfully', 200
+        return 'Invalid status', 400
+        
+    except Exception as e:
+        print(e)
+        return 'Error updating status', 500
 
 if (__name__ == '__main__'):
     app.run()
